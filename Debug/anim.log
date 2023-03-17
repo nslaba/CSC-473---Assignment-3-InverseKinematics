@@ -1,0 +1,5 @@
+﻿cl : command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
+  Bob.cpp
+C:\Users\slaba\Desktop\uvic degree\comp sci\CSC 473\Assignment 3\anim\Bob.h(31,7): warning C4215: nonstandard extension used: long float
+C:\Users\slaba\Desktop\uvic degree\comp sci\CSC 473\Assignment 3\anim\Bob.cpp(61,8): warning C4215: nonstandard extension used: long float
+  anim.vcxproj -> C:\Users\slaba\Desktop\uvic degree\comp sci\CSC 473\Assignment 3\Build\anim.exe

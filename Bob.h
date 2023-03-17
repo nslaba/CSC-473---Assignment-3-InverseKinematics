@@ -1,0 +1,41 @@
+#pragma once
+
+/*
+			This is Bob.
+
+*/
+
+#include "BaseSystem.h"
+#include <shared/defs.h>
+#include <util/util.h>
+#include "animTcl.h"
+#include <GLmodel/GLmodel.h>
+#include "Particle.h"
+#include "shared/opengl.h"
+#include <vector>
+
+class Bob : public BaseSystem
+{
+public:
+	Bob(const std::string& name);
+	// getters and setters
+
+
+	// Parameter variables for Bob and his classroom
+	float WallWidth = 24.0;
+	float WallHeight = 12.0;
+	float BoardWidth = 12.0;
+	float BoardHeight = 4.0;
+	float limbHeight = WallHeight / 8.0;
+	float limbWidth = WallHeight / 30.0;
+	long float L1 = 3.0;
+	float L2 = 3.0;
+	float L3 = 1.0;
+	float z = 3.0;
+
+	// Nescessary functions
+	int command(int argc, myCONST_SPEC char** argv);
+	void display(GLenum mode = GL_RENDER);
+protected:
+
+};
