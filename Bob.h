@@ -25,7 +25,9 @@ public:
 	float WallWidth = 24.0;
 	float WallHeight = 12.0;
 	float BoardWidth = 12.0;
-	float BoardHeight = 4.0;
+	float BoardHeight = 8.0;
+	float torsoWidth = WallHeight / 8.0;
+	float torsoHeight = WallHeight / 4.0;
 	float limbHeight = WallHeight / 8.0;
 	float limbWidth = WallHeight / 30.0;
 	long float L1 = 3.0;
@@ -34,6 +36,8 @@ public:
 	float z = 3.0;
 
 	// Nescessary functions
+	void drawScene();
+	void drawBob();
 	int command(int argc, myCONST_SPEC char** argv);
 	void display(GLenum mode = GL_RENDER);
 protected:

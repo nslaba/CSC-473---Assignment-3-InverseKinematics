@@ -26,6 +26,7 @@
 
 #include "ParticleSimulator.h"
 #include "ObjectPathSimulator.h"
+#include "BobDraws.h"
 
 //#include <util/jama/tnt_stopwatch.h>
 //#include <util/jama/jama_lu.h>
@@ -95,7 +96,7 @@ void MakeScene(void)
 
 	/* SAMPLE SCENE */
 	/* THE FOLLOWING IS DEDICATED TO ASSIGNMENT 2: PARTICLE SYSYEM*/
-	boolean success;
+	/*boolean success;
 
 	ParticleSystem* partSys = new ParticleSystem("partSys");
 	success = GlobalResourceManager::use()->addSystem(partSys, true);
@@ -103,19 +104,26 @@ void MakeScene(void)
 
 	ParticleSimulator* partSim = new ParticleSimulator("partSim");
 	success = GlobalResourceManager::use()->addSimulator(partSim, true);
-	assert(success);
+	assert(success);*/
 
 
 	// make sure it was registered successfully
 
 	/**************************END OF ParticleSystem INSTANCE************************************/
 		/* THE FOLLOWING IS DEDICATED TO ASSIGNMENT 3: Bob*/
-	success;
+	bool success;
 
 	Bob* bob = new Bob("bob");
 	success = GlobalResourceManager::use()->addSystem(bob, true);
 	assert(success);
 
+	HermiteSpline* drawingPath = new HermiteSpline("drawingPath");
+	success = GlobalResourceManager::use()->addSystem(drawingPath, true);
+	assert(success);
+
+	BobDraws* iksim = new BobDraws("iksim", drawingPath, bob);
+	success = GlobalResourceManager::use()->addSimulator(iksim, true);
+	assert(success);
 
 
 	// make sure it was registered successfully
@@ -149,55 +157,13 @@ void myKey(unsigned char key, int x, int y)
 
 
 
-static int testPart1(ClientData clientData, Tcl_Interp* interp, int argc, myCONST_SPEC char** argv)
-{
-	animTcl::OutputMessage("Started part 1.");
 
-	boolean success;
 
-	HermiteSpline* hermite = new HermiteSpline("hermite");
-	success = GlobalResourceManager::use()->addSystem(hermite, true);
-	assert(success);
-	return TCL_OK;
-}	// test part1
 
-static int testPart2(ClientData clientData, Tcl_Interp* interp, int argc, myCONST_SPEC char** argv)
-{
-	animTcl::OutputMessage("Started part 2.");
-
-	/* STEP 1: Delete systems used for part 1*/
-
-	/* STEP 2: Create an object and path systems*/
-	boolean success;
-
-	// Create an objectpath for the object as an instance of HermiteSpline class
-	HermiteSpline* objectpath = new HermiteSpline("objectpath");
-	success = GlobalResourceManager::use()->addSystem(objectpath, true);
-	assert(success);
-
-	ThreeDModel* threeDmodel = new ThreeDModel("threeDmodel");
-	success = GlobalResourceManager::use()->addSystem(threeDmodel, true);
-	assert(success);
-	
-
-	/* STEP 3: Create an object simulator*/
-	ObjectPathSimulator* objectpathSimulator = new ObjectPathSimulator( "objectpathSimulator", objectpath, threeDmodel);
-
-	success = GlobalResourceManager::use()->addSimulator( objectpathSimulator );
-
-	// make sure it was registered successfully
-	assert( success );
-
-	return TCL_OK;
-}	// test part2
 
 void mySetScriptCommands(Tcl_Interp* interp)
 {
 
-	Tcl_CreateCommand(interp, "part1", testPart1, (ClientData) NULL,
-		(Tcl_CmdDeleteProc*)NULL);
-	Tcl_CreateCommand(interp, "part2", testPart2, (ClientData)NULL,
-		(Tcl_CmdDeleteProc*)NULL);
 
 
 }	// mySetScriptCommands

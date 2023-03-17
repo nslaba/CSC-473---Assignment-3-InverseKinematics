@@ -53,6 +53,9 @@
     <ClCompile Include="Bob.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BobDraws.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="anim.h">
@@ -101,6 +104,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Bob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BobDraws.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

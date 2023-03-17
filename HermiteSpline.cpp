@@ -87,147 +87,7 @@ int HermiteSpline::command(int argc, myCONST_SPEC char** argv)
 		animTcl::OutputMessage("system %s: wrong number of params.", m_name.c_str());
 		return TCL_ERROR;
 	}
-	else if (strcmp(argv[0], "cr") == 0)
-	{ 
-		//Loop to the first available Control Point
-		int i = 0;
-		// Deal with the first knot's tangent
-
-		controlPoints[i].tangent = (float)(2.0)*(controlPoints[i + 1].point - controlPoints[i].point) - (float)(0.5)*(controlPoints[i + 2].point - controlPoints[i].point);
-		// Deal with the intermediate
-		i++;
-		for (i; i < numKnots-1; i++)
-		{	
-			controlPoints[i].tangent = (float)(0.5)*(controlPoints[i+1].point - controlPoints[i-1].point);
-
-		}
-		// Deal with the last
-		controlPoints[i].tangent = (float)(2.0) * (controlPoints[i].point - controlPoints[i-1].point) - (float)(0.5) * (controlPoints[i].point - controlPoints[i-2].point);
-
-	}
-	else if (strcmp(argv[0], "set") == 0)
-	{ 
-		if (argc == 6) {
-			if (strcmp(argv[1], "tangent") == 0)
-			{ //SET TANGENT
-				// update tangent at a certain  index
-				
-				float x = atof(argv[3]);
-				float y = atof(argv[4]);
-				float z = atof(argv[5]);
-				
-				// Then add the control point to the controlPoints array at the given index
-				int index = atof(argv[2]);
-				controlPoints[index].tangent = glm::vec3{ x,y,z };
-				updateLookUpTable();
-
-			}
-			else if (strcmp(argv[1], "point") == 0)
-			{ // SET THE POINT
-				// update a control point at a given index
-				float x = atof(argv[3]);
-				float y = atof(argv[4]);
-				float z = atof(argv[5]);
-				
-				// Then add the control point to the controlPoints array at the given index
-				int index = atof(argv[2]);
-				controlPoints[index].point = glm::vec3{x,y,z};
-				updateLookUpTable();
-			}
-		}
-		else 
-		{ // Wrong number of arguments
-			animTcl::OutputMessage("Usage: read <file_name>");
-			return TCL_ERROR;
-		}
-	}
-	else if (strcmp(argv[0], "add") == 0)
-	{ // ADD A POINT at the end of HermiteSpline (MANIPULATION OF CONTROL POINTS AND TANGENTS USING CONSOLE)
-		if (argc == 8)
-		{
-			// create a control point
-			ControlPoint controlPoint;
-			controlPoint.point.x = atof(argv[2]);
-			controlPoint.point.y = atof(argv[3]);
-			controlPoint.point.z = atof(argv[4]);
-			controlPoint.tangent.x = atof(argv[6]);
-			controlPoint.tangent.y = atof(argv[6]);
-			controlPoint.tangent.z = atof(argv[7]);
-			controlPoint.empty = false;
-
-			// add it to the end of the conrolPoints array
-			
-			controlPoints[numKnots] = controlPoint;
-			numKnots++;
-			updateLookUpTable();
-		}
-		else
-		{
-			animTcl::OutputMessage("Usage: pos <x> <y> <z> ");
-			return TCL_ERROR;
-
-		}
-	}
-	else if (strcmp(argv[0], "getArcLength") == 0)
-	{ 
-		if (argc == 2)
-		{	
-			float t = atof(argv[1]);
-			float arcLength = getArcLength(t);
-
-			animTcl::OutputMessage("ArcLength is: ");
-			animTcl::OutputMessage(const_cast<char*>(std::to_string(arcLength).c_str()));
-			return TCL_OK;
-		}
-		else
-		{
-			return TCL_ERROR;
-		}
-		
-
-	}
-	else if (strcmp(argv[0], "load") == 0)
-	{ // INUPUT from a FILE
-		if (argc == 2) {
-
-			std::string filename = argv[1];
-			load(filename);
-		}
-		else {
-			animTcl::OutputMessage("Wrong amount of arguments");
-			return TCL_ERROR;
-		}
-		
-	}
-	else if (strcmp(argv[0], "export") == 0)
-	{ // OUTPUT to a FILE
-		if (argc == 2) {
-			// Write the current HermiteSpline points into a new file
-			std::string filename = argv[1];
-			std::ofstream f(filename);
-			// First line is <HermiteSpline Name> <n>
-
-			// Now loop through the existing array of controlPoints and write them into the file
-			int i = 0;
-			while (!controlPoints[1].empty && i < 40)
-			{
-				f << std::to_string(controlPoints[i].point.x)
-					<< " " << std::to_string(controlPoints[i].point.y)
-					<< " " << std::to_string(controlPoints[i].point.z)
-					<< " " << std::to_string(controlPoints[i].tangent.x)
-					<< " " << std::to_string(controlPoints[i].tangent.y)
-					<< " " << std::to_string(controlPoints[i].tangent.z) << "\n";
-			}
-
-			// Close the file
-			f.close();
-		}
-		else {
-			animTcl::OutputMessage("Wrong amount of arguments");
-			return TCL_ERROR;
-		}
-	} 
-
+	
 	glutPostRedisplay();
 	return TCL_OK;
 
@@ -252,11 +112,29 @@ float HermiteSpline::getArcLength(float t)
 	return arcLength;
 }
 
+void HermiteSpline::makeCatmulRom()
+{
+	//Loop to the first available Control Point
+	int i = 0;
+	// Deal with the first knot's tangent
+
+	controlPoints[i].tangent = (float)(2.0) * (controlPoints[i + 1].point - controlPoints[i].point) - (float)(0.5) * (controlPoints[i + 2].point - controlPoints[i].point);
+	// Deal with the intermediate
+	i++;
+	for (i; i < numKnots - 1; i++)
+	{
+		controlPoints[i].tangent = (float)(0.5) * (controlPoints[i + 1].point - controlPoints[i - 1].point);
+
+	}
+	// Deal with the last
+	controlPoints[i].tangent = (float)(2.0) * (controlPoints[i].point - controlPoints[i - 1].point) - (float)(0.5) * (controlPoints[i].point - controlPoints[i - 2].point);
+}
+
 void HermiteSpline::load(std::string filename)
 {
 	std::fstream f;
 	f.open(filename);
-
+	
 	std::string fileLine;
 
 	// Get the first line of the file that does not relate to the control points
@@ -270,51 +148,45 @@ void HermiteSpline::load(std::string filename)
 
 	while (1)
 	{
-
+		
 		// Read the file line by line
 		std::getline(f, fileLine);
 
 		if (f.eof()) break;
-
-		/* Parse on a spaceand save the Px, Py, Pz, Sx, Sy, Sz */
+	
+		/* Parse on a space and save the Px, Py, Pz, Sx, Sy, Sz */
 		// Point:
 		char* next = NULL;
 		char* pX = strtok_s(const_cast<char*>(fileLine.c_str()), " ", &next);
 		std::string fpx(pX);
 		controlPoint.point.x = std::stof(fpx);
 
+		
 		char* pY = strtok_s(NULL, " ", &next);
 		std::string fpy(pY);
-		controlPoint.point.y = std::stof(fpy);
+		controlPoint.point.y = std::stof(fpy)/1.5;
+	
 
-		char* pZ = strtok_s(NULL, " ", &next);
-		std::string fpz(pZ);
-		controlPoint.point.z = std::stof(fpz);
-
-		// tangent:
-		char* tX = strtok_s(NULL, " ", &next);
-		std::string ftx(tX);
-		controlPoint.tangent.x = std::stof(ftx);
-
-		char* tY = strtok_s(NULL, " ", &next);
-		std::string fty(tY);
-		controlPoint.tangent.y = std::stof(fty);
-
-		char* tZ = strtok_s(NULL, " ", &next);
-		std::string ftz(tZ);
-		controlPoint.tangent.z = std::stof(ftz);
-
+		controlPoint.point.z = 0.1;
+		
+		controlPoint.tangent.x = 0.0;
+		controlPoint.tangent.y = 0.0;
+		controlPoint.tangent.z = 0.0;
+		
 		controlPoint.empty = false;
 
 		// Add the controlPoint to controlPoints array keeping track of the appropriate index
 		controlPoints[index] = controlPoint;
 		numKnots++;
-
+		
 		index++;
 	}
+	
 	// Close the file
 	f.close();
+	makeCatmulRom();
 	updateLookUpTable();
+	
 }
 
 /* ****************************************************************************************************************************************************
@@ -406,6 +278,7 @@ void HermiteSpline::updateLookUpTable()
 	u +=deltaU;
 	entry.u = u;
 	entry.arcLength += glm::length(controlPoints[numKnots-1].point - prev.point);
+
 	lookUpTable.push_back(entry);
 
 }
@@ -422,10 +295,10 @@ void HermiteSpline::display(GLenum mode)
 
 	glLineWidth(0.5);
 	glBegin(GL_LINE_STRIP);
-
+	glColor3f(1, 1, 1);
 
 	for (int i = 0; i < numKnots-1; i++) {
-		glVertex3f(controlPoints[i].point.x, controlPoints[i].point.y, controlPoints[i].point.z);
+		glVertex3f(controlPoints[i].point.x, controlPoints[i].point.y, 0.1);
 		// Generate a hundred extra points between the current and the next in order to make the Hermite HermiteSpline smooth.
 		for (double t = 0; t < 1; t += 0.001) 
 		{
@@ -433,16 +306,16 @@ void HermiteSpline::display(GLenum mode)
 			ControlPoint nextPoint = getNext(controlPoints[i], controlPoints[i + 1], t);			
 			
 			// Draw the point
-			glVertex3f(nextPoint.point.x, nextPoint.point.y, nextPoint.point.z);
+			glVertex3f(nextPoint.point.x, nextPoint.point.y, 0.1);
 		}
 	}
-	glVertex3f(controlPoints[numKnots - 1].point.x, controlPoints[numKnots - 1].point.y, controlPoints[numKnots - 1].point.z);
+	glVertex3f(controlPoints[numKnots - 1].point.x, controlPoints[numKnots - 1].point.y, 0.1);
 	
 	glEnd();
 
 
 	
-	glColor3f(0.3, 0.7, 0.1);
+	//glColor3f(1, 1, 1);
 
 
 	glPopMatrix();

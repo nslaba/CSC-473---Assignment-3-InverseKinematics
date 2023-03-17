@@ -105,6 +105,7 @@
     <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="BaseSimulator.cpp" />
     <ClCompile Include="Bob.cpp" />
+    <ClCompile Include="BobDraws.cpp" />
     <ClCompile Include="GlobalResourceManager.cpp" />
     <ClCompile Include="HermiteSpline.cpp" />
     <ClCompile Include="myScene.cpp" />
@@ -122,6 +123,7 @@
     <ClInclude Include="BaseObject.h" />
     <ClInclude Include="BaseSimulator.h" />
     <ClInclude Include="Bob.h" />
+    <ClInclude Include="BobDraws.h" />
     <ClInclude Include="GlobalResourceManager.h" />
     <ClInclude Include="HermiteSpline.h" />
     <ClInclude Include="myScene.h" />

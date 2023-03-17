@@ -15,7 +15,7 @@
 #include "shared/opengl.h"
 #include <vector>
 
-#define MAX_KNOTS 40
+#define MAX_KNOTS 100
 
 
 
@@ -41,6 +41,7 @@ public:
 	void display(GLenum mode = GL_RENDER);
 	int command(int argc, myCONST_SPEC char** argv);
 	float getArcLength(float t);
+	void makeCatmulRom();
 	void load(std::string);
 	ControlPoint getNext(ControlPoint, ControlPoint, double);
 	void updateLookUpTable();

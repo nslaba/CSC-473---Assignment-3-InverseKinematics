@@ -368,6 +368,6 @@ void ParticleSimulator::display(GLenum mode)
 
 	glColor3f(0.3, 0.7, 0.1);
 
-	
+	glPopMatrix();
 	glPopAttrib();
 }
