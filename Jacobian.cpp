@@ -1,8 +1,11 @@
 #include "Jacobian.h"
 
-Jacobian::Jacobian() 
+Jacobian::Jacobian(rAngles angles, double L1, double L2, double L3, glm::dvec4 point): jacobian(3,7)
 {
-
+	jacobian << setColumn1(angles, L1, L2, L3, point).x, setColumn2(angles, L1, L2, L3, point).x, setColumn3(angles, L1, L2, L3, point).x, setColumn4(angles, L1, L2, L3, point).x, setColumn5(angles, L1, L2, L3, point).x, setColumn6(angles, L1, L2, L3, point).x, setColumn7(angles, L1, L2, L3, point).x,
+		setColumn1(angles, L1, L2, L3, point).y, setColumn2(angles, L1, L2, L3, point).y, setColumn3(angles, L1, L2, L3, point).y, setColumn4(angles, L1, L2, L3, point).y, setColumn5(angles, L1, L2, L3, point).y, setColumn6(angles, L1, L2, L3, point).y, setColumn7(angles, L1, L2, L3, point).y,
+		setColumn1(angles, L1, L2, L3, point).z, setColumn2(angles, L1, L2, L3, point).z, setColumn3(angles, L1, L2, L3, point).z, setColumn4(angles, L1, L2, L3, point).z, setColumn5(angles, L1, L2, L3, point).z, setColumn6(angles, L1, L2, L3, point).z, setColumn7(angles, L1, L2, L3, point).z
+	;
 }
 
 glm::dvec4 Jacobian::setColumn1(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point)

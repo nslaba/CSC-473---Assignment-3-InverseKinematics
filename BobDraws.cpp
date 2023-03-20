@@ -13,6 +13,24 @@ BobDraws::~BobDraws()
 
 int BobDraws::step(double time)
 {
+	// CALCULATE E = Ptarget - Pcurr --> Ptarget and Pcurr are points on spline
+
+	// WHILE |E| < epsilon do:
+
+
+	// dtX = K * E
+
+	// PLUG CURR ANGLES INTO JACOBIAN
+
+	// FIND PSEUDO INVERSE OF JACOBIAN BASED ON BETA
+
+	// COMPUTE dtTHETA = J+dtX
+
+	// UPDATE THETAS
+
+	// UPDATE P = P+ dtX
+
+	// UPDATE E = Ptarget - P (New error)
 
 	
 

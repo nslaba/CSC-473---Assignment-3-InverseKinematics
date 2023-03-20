@@ -14,6 +14,7 @@
 #include <math.h>
 
 
+
 class BobDraws :
 	public BaseSimulator
 {
