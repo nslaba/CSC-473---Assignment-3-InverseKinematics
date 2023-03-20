@@ -13,8 +13,13 @@ BobDraws::~BobDraws()
 
 int BobDraws::step(double time)
 {
+
+	
+
 	return 0;
 }
+
+
 
 int BobDraws::command(int argc, myCONST_SPEC char** argv)
 {

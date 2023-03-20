@@ -108,6 +108,7 @@
     <ClCompile Include="BobDraws.cpp" />
     <ClCompile Include="GlobalResourceManager.cpp" />
     <ClCompile Include="HermiteSpline.cpp" />
+    <ClCompile Include="Jacobian.cpp" />
     <ClCompile Include="myScene.cpp" />
     <ClCompile Include="ObjectPathSimulator.cpp" />
     <ClCompile Include="ParticleSimulator.cpp" />
@@ -126,11 +127,13 @@
     <ClInclude Include="BobDraws.h" />
     <ClInclude Include="GlobalResourceManager.h" />
     <ClInclude Include="HermiteSpline.h" />
+    <ClInclude Include="Jacobian.h" />
     <ClInclude Include="myScene.h" />
     <ClInclude Include="ObjectPathSimulator.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="ParticleSimulator.h" />
     <ClInclude Include="ParticleSystem.h" />
+    <ClInclude Include="rAngles.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Spring.h" />
     <ClInclude Include="ThreeDModel.h" />

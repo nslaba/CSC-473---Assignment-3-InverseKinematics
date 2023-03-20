@@ -56,18 +56,13 @@ void Bob::drawScene() {
 
 void Bob::drawBob() {
 
-	/*glEnable(GL_LIGHTING);
-	glMatrixMode(GL_MODELVIEW);*/
-	//glPushAttrib(GL_ALL_ATTRIB_BITS);
-	//
-
-	////glPushAttrib(GL_ALL_ATTRIB_BITS);
+	
 	/* STEP 1: Draw character, Bob */
 	
 	glPushMatrix(); 
 
 	// Translate the whole person away from the board by z and down by half of torsoHeight
-	glTranslated(0, -torsoHeight / 2.0, z);
+	glTranslated(-torsoWidth/2.0, -torsoHeight / 2.0, z);
 
 	// Draw Torso			
 	glPushMatrix(); 
@@ -86,26 +81,7 @@ void Bob::drawBob() {
 	GLdrawCircle(WallHeight / 20.0, 500);
 	glPopMatrix();
 
-	// ARMS
-	// right upper
-	glPushMatrix();
-	glTranslated((torsoWidth + L1) / 2.0, torsoHeight / 2.0, 0);
-	// For now Rotate 90
-	glRotated(90, 0, 0, 1);
-	//right lower
-	glPushMatrix();
-	glTranslated(0, -(L1 + L2) / 2.0, 0);
-	glScaled(limbWidth, L2, 1);
-	glEnable(GL_COLOR_MATERIAL);
-	glColor3f(0.0, 1.0, 0.0);
-	GLdrawCircle(0.5, 500);
-	glPopMatrix();
-
-	glScaled(limbWidth, L1, 1);
-	glEnable(GL_COLOR_MATERIAL);
-	glColor3f(0.0, 1.0, 0.0);
-	GLdrawCircle(0.5, 500);
-	glPopMatrix();
+	// ARM LEFT
 
 	// left upper
 	glPushMatrix();
@@ -171,6 +147,35 @@ void Bob::drawBob() {
 	//glPopAttrib();
 }
 
+void Bob::drawRightHand(rAngles angles)
+{
+	glPushMatrix();
+	glTranslated(-torsoWidth / 2.0, -torsoHeight / 2.0, z);
+	// ARMS
+	// right upper
+	glPushMatrix();
+	glTranslated((torsoWidth + L1) / 2.0, torsoHeight / 2.0, 0);
+	// For now Rotate 90
+	glRotated(90, 0, 0, 1);
+
+	//right lower
+	glPushMatrix();
+	glTranslated(0, -(L1 + L2) / 2.0, 0);
+	glScaled(limbWidth, L2, 1);
+	glEnable(GL_COLOR_MATERIAL);
+	glColor3f(0.0, 1.0, 0.0);
+	GLdrawCircle(0.5, 500);
+	glPopMatrix();
+
+	glScaled(limbWidth, L1, 1);
+	glEnable(GL_COLOR_MATERIAL);
+	glColor3f(0.0, 1.0, 0.0);
+	GLdrawCircle(0.5, 500);
+	glPopMatrix();
+
+	glPopMatrix();
+}
+
 int Bob::command(int argc, myCONST_SPEC char** argv)
 {
 	if (argc < 1)
@@ -213,4 +218,5 @@ void Bob::display(GLenum mode)
 	
 	drawScene();
 	drawBob();
+	drawRightHand(newAngles);
 }

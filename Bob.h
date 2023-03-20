@@ -13,6 +13,7 @@
 #include "Particle.h"
 #include "shared/opengl.h"
 #include <vector>
+#include "rAngles.h"
 
 class Bob : public BaseSystem
 {
@@ -35,9 +36,12 @@ public:
 	float L3 = 1.0;
 	float z = 3.0;
 
+	rAngles newAngles;
+
 	// Nescessary functions
 	void drawScene();
 	void drawBob();
+	void drawRightHand(rAngles angles);
 	int command(int argc, myCONST_SPEC char** argv);
 	void display(GLenum mode = GL_RENDER);
 protected:
