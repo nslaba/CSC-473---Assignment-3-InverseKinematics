@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Jacobian.h"
 #include <GLModel/GLModel.h>
 #include <shared/defs.h>
 #include <util/util.h>
@@ -15,6 +16,8 @@
 
 
 
+
+
 class BobDraws :
 	public BaseSimulator
 {
@@ -27,4 +30,15 @@ public:
 private:
 	HermiteSpline* drawingPath;
 	Bob* m_bob;
+	void initializePs();
+	int cPointID = 0;
+	glm::dvec3 dtX;
+	glm::vec3 intermediate;
+	ControlPoint Ptarget;
+	ControlPoint P; // Initially it is the starting of the spline
+	glm::dvec3 E;
+	double K = 0.001;
+	double t = 0.001;
+	double epsilon = 0.0001;
+
 };

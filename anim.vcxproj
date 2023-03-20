@@ -104,6 +104,7 @@
     <ClCompile Include="animTcl.cpp" />
     <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="BaseSimulator.cpp" />
+    <ClCompile Include="BetaSolver.cpp" />
     <ClCompile Include="Bob.cpp" />
     <ClCompile Include="BobDraws.cpp" />
     <ClCompile Include="GlobalResourceManager.cpp" />
@@ -123,6 +124,7 @@
     <ClInclude Include="animTcl.h" />
     <ClInclude Include="BaseObject.h" />
     <ClInclude Include="BaseSimulator.h" />
+    <ClInclude Include="BetaSolver.h" />
     <ClInclude Include="Bob.h" />
     <ClInclude Include="BobDraws.h" />
     <ClInclude Include="GlobalResourceManager.h" />

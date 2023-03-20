@@ -6,7 +6,7 @@
 #include <windows.h>
 #endif
 
-
+#include "BobDraws.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -26,7 +26,7 @@
 
 #include "ParticleSimulator.h"
 #include "ObjectPathSimulator.h"
-#include "BobDraws.h"
+
 
 //#include <util/jama/tnt_stopwatch.h>
 //#include <util/jama/jama_lu.h>

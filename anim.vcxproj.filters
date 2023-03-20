@@ -59,6 +59,9 @@
     <ClCompile Include="Jacobian.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BetaSolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="anim.h">
@@ -116,6 +119,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="rAngles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BetaSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

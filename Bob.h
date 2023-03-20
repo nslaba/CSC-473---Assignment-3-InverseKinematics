@@ -5,6 +5,7 @@
 
 */
 
+
 #include "BaseSystem.h"
 #include <shared/defs.h>
 #include <util/util.h>
@@ -37,6 +38,7 @@ public:
 	float z = 3.0;
 
 	rAngles newAngles;
+	rAngles curAngles;
 
 	// Nescessary functions
 	void drawScene();
