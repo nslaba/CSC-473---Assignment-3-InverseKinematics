@@ -37,8 +37,8 @@ public:
 	float L3 = 1.0;
 	float z = 3.0;
 
-	rAngles newAngles;
-	rAngles curAngles;
+	rAngles angles = rAngles{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+
 
 	// Nescessary functions
 	void drawScene();

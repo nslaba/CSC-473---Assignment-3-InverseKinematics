@@ -13,6 +13,7 @@
 #include <glm/geometric.hpp>
 #include "HermiteSpline.h"
 #include <math.h>
+#include "BetaSolver.h"
 
 
 
@@ -26,19 +27,21 @@ public:
 	~BobDraws();
 	int step(double time);
 	int command(int argc, myCONST_SPEC char** argv);
-	
+	int init(double time) { return 0; };
 private:
 	HermiteSpline* drawingPath;
 	Bob* m_bob;
 	void initializePs();
 	int cPointID = 0;
 	glm::dvec3 dtX;
-	glm::vec3 intermediate;
 	ControlPoint Ptarget;
 	ControlPoint P; // Initially it is the starting of the spline
+	
+	
 	glm::dvec3 E;
 	double K = 0.001;
 	double t = 0.001;
 	double epsilon = 0.0001;
+	
 
 };

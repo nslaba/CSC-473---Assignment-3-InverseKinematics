@@ -150,23 +150,44 @@ void Bob::drawBob() {
 void Bob::drawRightHand(rAngles angles)
 {
 	glPushMatrix();
-	glTranslated(-torsoWidth / 2.0, -torsoHeight / 2.0, z);
+	glTranslated(torsoWidth / 2.0, torsoHeight/2.0, z);
 	// ARMS
-	// right upper
+	// right arm
 	glPushMatrix();
-	glTranslated((torsoWidth + L1) / 2.0, torsoHeight / 2.0, 0);
+	
 	// For now Rotate 90
-	glRotated(90, 0, 0, 1);
-
-	//right lower
+	glRotated(angles.theta1, 1.0, 0.0, 0.0);
+	glRotated(angles.theta2, 0.0, 1.0, 0.0);
+	glRotated(angles.theta3, 0.0, 0.0, 1.0);
+	glTranslated(0, -L1, 0);
+	//right forearm
 	glPushMatrix();
-	glTranslated(0, -(L1 + L2) / 2.0, 0);
+	
+	glRotated(angles.theta4, 1.0, 0.0, 0.0);
+	glRotated(angles.theta5, 0.0, 1.0, 0.0);
+	glTranslated(0, -L2, 0);
+
+	// right hand
+	glPushMatrix();	
+	glRotated(angles.theta6, 1.0, 0.0, 0.0);
+	glRotated(angles.theta7, 0.0, 1.0, 0.0);
+	glTranslated(0, -L3*2, 0);
+
+	//draw hand
+	glScaled(limbWidth, L3, 1);
+	glEnable(GL_COLOR_MATERIAL);
+	glColor3f(0.0, 1.0, 0.0);
+	GLdrawCircle(0.5, 500);
+	glPopMatrix();
+
+	//draw forearm
 	glScaled(limbWidth, L2, 1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);
 	GLdrawCircle(0.5, 500);
 	glPopMatrix();
 
+	//draw arm
 	glScaled(limbWidth, L1, 1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);
@@ -218,5 +239,6 @@ void Bob::display(GLenum mode)
 	
 	drawScene();
 	drawBob();
-	drawRightHand(newAngles);
+	drawRightHand(angles);
+	
 }

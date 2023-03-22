@@ -15,7 +15,7 @@
 #include "shared/opengl.h"
 #include <vector>
 
-#define MAX_KNOTS 100
+#define MAX_KNOTS 1000
 
 
 

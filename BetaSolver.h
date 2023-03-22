@@ -18,15 +18,18 @@ class BetaSolver
 public:
 	BetaSolver(Jacobian j, glm::vec3 dtX);
 
-	Eigen::MatrixXd betaSolver;
-	// getters and setters
+	Eigen::MatrixXd beta;
 
+	// Solve for beta
+	Eigen::Vector3d betaSolver(Jacobian j, glm::vec3 dtX);
 
 protected:
 	
-	// Translations
 	
-	// Rotations
-	
+	Eigen::Vector3d Y; // temp Y vector to help solve for Beta
+	Eigen::Vector3d Beta; // final solution
+	Eigen::Matrix3Xd Lower; // lower triangular of JJt
+	Eigen::Matrix3Xd Upper; // Upper triangular of JJt
+
 };
 

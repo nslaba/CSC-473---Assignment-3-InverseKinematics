@@ -20,7 +20,7 @@ public:
 
 	Eigen::MatrixXd jacobian;
 	// getters and setters
-
+	
 
 protected:
 	glm::dvec4 setColumn1(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point);
