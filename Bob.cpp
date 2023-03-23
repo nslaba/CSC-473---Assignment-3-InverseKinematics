@@ -85,12 +85,27 @@ void Bob::drawBob() {
 
 	// left upper
 	glPushMatrix();
-	glTranslated(-(torsoWidth + L1) / 2.0, torsoHeight / 2.0, 0);
+	//glTranslated(0.0, -torsoHeight/2.0, 0.0);
+
+	glTranslated(-(torsoWidth + L1) / 2.0, torsoHeight / 2.0, 0.0);
+	//glTranslated(-(torsoWidth + L1) / 2.0, 0.0, 0.0);
 	// For now Rotate 90
 	glRotated(-90, 0, 0, 1);
+	
 	//right lower
 	glPushMatrix();
 	glTranslated(0, -(L1 + L2) / 2.0, 0);
+	//glRotated(15, 0, 0, 1);
+
+	// Draw Hand
+	glPushMatrix();
+	glTranslated(0, -(L2 + L3) / 2.0, 0);
+	glScaled(limbWidth, L3, 1);
+	glEnable(GL_COLOR_MATERIAL);
+	glColor3f(0.0, 1.0, 0.0);
+	GLdrawCircle(0.5, 500);
+	glPopMatrix();
+
 	glScaled(limbWidth, L2, 1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);
@@ -150,19 +165,19 @@ void Bob::drawBob() {
 void Bob::drawRightHand(rAngles angles)
 {
 	glPushMatrix();
-	glTranslated(torsoWidth / 2.0, torsoHeight/2.0, z);
+	glTranslated(0.0, torsoHeight/4.0, z);
 	// ARMS
 	// right arm
 	glPushMatrix();
 	
-	// For now Rotate 90
+	// 3 DOF for Shoulder
 	glRotated(angles.theta1, 1.0, 0.0, 0.0);
 	glRotated(angles.theta2, 0.0, 1.0, 0.0);
 	glRotated(angles.theta3, 0.0, 0.0, 1.0);
 	glTranslated(0, -L1, 0);
+	
 	//right forearm
 	glPushMatrix();
-	
 	glRotated(angles.theta4, 1.0, 0.0, 0.0);
 	glRotated(angles.theta5, 0.0, 1.0, 0.0);
 	glTranslated(0, -L2, 0);
@@ -171,7 +186,7 @@ void Bob::drawRightHand(rAngles angles)
 	glPushMatrix();	
 	glRotated(angles.theta6, 1.0, 0.0, 0.0);
 	glRotated(angles.theta7, 0.0, 1.0, 0.0);
-	glTranslated(0, -L3*2, 0);
+	glTranslated(0, -(L3*2.0), 0);
 
 	//draw hand
 	glScaled(limbWidth, L3, 1);

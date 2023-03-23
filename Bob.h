@@ -32,10 +32,10 @@ public:
 	float torsoHeight = WallHeight / 4.0;
 	float limbHeight = WallHeight / 8.0;
 	float limbWidth = WallHeight / 30.0;
-	long float L1 = 3.0;
-	float L2 = 3.0;
-	float L3 = 1.0;
-	float z = 3.0;
+	long float L1 = 2.0;
+	float L2 = 2.0;
+	float L3 = 0.5;
+	float z = 1.0;
 
 	rAngles angles = rAngles{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 

@@ -13,14 +13,16 @@ BobDraws::~BobDraws()
 
 int BobDraws::step(double time)
 {
-	// CALCULATE E = Ptarget - Pcurr --> Ptarget and Pcurr are points on spline
+	// At time == 0, make hand move to the start of the spline
+	if (!time)
+	{
+
+
+	}
 
 	//if (!drawingPath->controlPoints[cPointID +1].empty)
-		//while (!drawingPath->controlPoints[cPointID +1].empty && k < 1)
-	//{ // WHILE |E| < epsilon do:
 
-		// dtX = K * E --> get dtX based on get next function in 
-		Ptarget = drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], 0.01);
+		Ptarget = drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t);
 		dtX = Ptarget.point - P.point;
 		
 		// PLUG CURR ANGLES INTO JACOBIAN
@@ -42,21 +44,28 @@ int BobDraws::step(double time)
 		m_bob->angles.theta6 = m_bob->angles.theta6 + dtThetas[5];
 		m_bob->angles.theta7 = m_bob->angles.theta7 + dtThetas[6];
 		
-		// UPDATE P = P+ dtX
+		// UPDATE P 
 		P = Ptarget;	
 //	}
 	// Update t parameter to walk closer towards the next control point
 	t++;
 	// update control point id when t==1
-	if (t) cPointID++;
+	if (t) {
+		cPointID++;
+		t = 0.001;
+	}
 
 	return 0;
 }
 
 void BobDraws::initializePs() {
-	P = drawingPath->controlPoints[0];
-	Ptarget = drawingPath->getNext(drawingPath->controlPoints[0], drawingPath->controlPoints[1], t);
-	E = Ptarget.point - P.point;
+	ControlPoint initial = ControlPoint();
+	initial.empty = false;
+	initial.point = glm::vec3(0.0, -(m_bob->L1 + m_bob->L2 + m_bob->L3) + m_bob->torsoHeight / 4.0, m_bob->z); //initial position of end effector
+	P = initial;
+	Ptarget = drawingPath->controlPoints[0];
+	//P = drawingPath->controlPoints[0];
+	//Ptarget = drawingPath->getNext(drawingPath->controlPoints[0], drawingPath->controlPoints[1], t);
 }
 
 int BobDraws::command(int argc, myCONST_SPEC char** argv)

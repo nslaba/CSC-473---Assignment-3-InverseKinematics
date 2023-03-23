@@ -16,9 +16,6 @@
 #include "BetaSolver.h"
 
 
-
-
-
 class BobDraws :
 	public BaseSimulator
 {
@@ -36,12 +33,5 @@ private:
 	glm::dvec3 dtX;
 	ControlPoint Ptarget;
 	ControlPoint P; // Initially it is the starting of the spline
-	
-	
-	glm::dvec3 E;
-	double K = 0.001;
 	double t = 0.001;
-	double epsilon = 0.0001;
-	
-
 };
