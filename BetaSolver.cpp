@@ -17,8 +17,8 @@ Eigen::Vector3d BetaSolver::betaSolver(Jacobian j, glm::vec3 dtX)
 	Eigen::Matrix3Xd jjt = j.jacobian * j.jacobian.transpose();
 	// Use the eigen properties and functions to solve for beta with Lower Upper triangular
 	Eigen::PartialPivLU<Eigen::Matrix3d> lu(jjt);
-	Eigen::Vector3d beta = lu.solve(vel);
-	return beta;
+	Eigen::Vector3d b = lu.solve(vel);
+	return b;
 }
 
 

@@ -21,8 +21,6 @@ public:
 	Eigen::MatrixXd jacobian;
 	// getters and setters
 	
-
-protected:
 	glm::dvec4 setColumn1(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point);
 	glm::dvec4 setColumn2(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point);
 	glm::dvec4 setColumn3(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point);
@@ -30,6 +28,8 @@ protected:
 	glm::dvec4 setColumn5(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point);
 	glm::dvec4 setColumn6(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point);
 	glm::dvec4 setColumn7(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point);
+protected:
+	
 
 	// Translations
 	glm::vec4 Jacobian::tShoulder(double translation, glm::dvec4 point);

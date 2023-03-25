@@ -11,6 +11,7 @@
 #include "BaseSimulator.h"
 #include <glm/glm.hpp>
 #include <glm/geometric.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "HermiteSpline.h"
 #include <math.h>
 #include "BetaSolver.h"
@@ -28,7 +29,23 @@ public:
 private:
 	HermiteSpline* drawingPath;
 	Bob* m_bob;
+	glm::mat4x4 identity{ 1.0 };
+	glm::mat4x4 transform;
+	glm::mat4x4 translateL1{1.0, 0.0, 0.0, 0.0,
+							0.0, 1.0, 0.0, 0.0,
+							0.0, 0.0, 1.0, 0.0,
+							0.0, -m_bob->L1, 0.0, 1.0
+
+	};
+	glm::mat4x4 translateL2L3{ 1.0, 0.0, 0.0, 0.0,
+							0.0, 1.0, 0.0, 0.0,
+							0.0, 0.0, 1.0, 0.0,
+							0.0, -(m_bob->L2 + m_bob->L3), 0.0, 1.0
+
+	};
+
 	void initializePs();
+	Eigen::VectorXd dtThetas;
 	int cPointID = 0;
 	glm::dvec3 dtX;
 	ControlPoint Ptarget;

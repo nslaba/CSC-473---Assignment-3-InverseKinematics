@@ -6,7 +6,7 @@ Jacobian::Jacobian(rAngles angles, double L1, double L2, double L3, glm::dvec4 p
 		setColumn1(angles, L1, L2, L3, point).y, setColumn2(angles, L1, L2, L3, point).y, setColumn3(angles, L1, L2, L3, point).y, setColumn4(angles, L1, L2, L3, point).y, setColumn5(angles, L1, L2, L3, point).y, setColumn6(angles, L1, L2, L3, point).y, setColumn7(angles, L1, L2, L3, point).y,
 		setColumn1(angles, L1, L2, L3, point).z, setColumn2(angles, L1, L2, L3, point).z, setColumn3(angles, L1, L2, L3, point).z, setColumn4(angles, L1, L2, L3, point).z, setColumn5(angles, L1, L2, L3, point).z, setColumn6(angles, L1, L2, L3, point).z, setColumn7(angles, L1, L2, L3, point).z
 	;
-	
+	animTcl::OutputMessage("the point values are %f, %f, %f", point.x, point.y, point.z);
 	
 }
 
@@ -17,11 +17,14 @@ glm::dvec4 Jacobian::setColumn1(rAngles angles, double trShoulder, double trElbo
 	glm::dvec4 pointWorld;
 	// WRIST TRANSFORM
 	pointWorld = tWrist(trWrist, (yRoll(angles.theta7, (xRoll(angles.theta6, point)))));
+	animTcl::OutputMessage("Column 1 values in jacobian after wrist transform are", pointWorld.x, pointWorld.y, pointWorld.z);
+	animTcl::OutputMessage("the point values are", point.x, point.y, point.z);
 	// ELBOW TRANSFORM
 	pointWorld = tElbow(trElbow, (yRoll(angles.theta5, ( xRoll(angles.theta4, point)))));
 	//SHOULDER TRANSFORM
 	pointWorld = tShoulder(trShoulder, (zRoll(angles.theta3, (yRoll(angles.theta2, (dtxRoll(angles.theta1, point)))))));
 
+	animTcl::OutputMessage("Column 1 values in jacobian are %f, %f, %f", pointWorld.x, pointWorld.y, pointWorld.z);
 	return pointWorld;
 }
 glm::dvec4 Jacobian::setColumn2(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point)
@@ -33,7 +36,7 @@ glm::dvec4 Jacobian::setColumn2(rAngles angles, double trShoulder, double trElbo
 	pointWorld = tElbow(trElbow, (yRoll(angles.theta5, (xRoll(angles.theta4, point)))));
 	//SHOULDER TRANSFORM
 	pointWorld = tShoulder(trShoulder, (zRoll(angles.theta3, (dtyRoll(angles.theta2, (xRoll(angles.theta1, point)))))));
-
+	animTcl::OutputMessage("Column 2 values in jacobian are %f, %f, %f", pointWorld.x, pointWorld.y, pointWorld.z);
 	return pointWorld;
 }
 glm::dvec4 Jacobian::setColumn3(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point)
@@ -45,7 +48,7 @@ glm::dvec4 Jacobian::setColumn3(rAngles angles, double trShoulder, double trElbo
 	pointWorld = tElbow(trElbow, (yRoll(angles.theta5, (xRoll(angles.theta4, point)))));
 	//SHOULDER TRANSFORM
 	pointWorld = tShoulder(trShoulder, (dtzRoll(angles.theta3, (yRoll(angles.theta2, (xRoll(angles.theta1, point)))))));
-
+	animTcl::OutputMessage("Column 3 values in jacobian are %f, %f, %f", pointWorld.x, pointWorld.y, pointWorld.z);
 	return pointWorld;
 }
 glm::dvec4 Jacobian::setColumn4(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point)
@@ -57,7 +60,7 @@ glm::dvec4 Jacobian::setColumn4(rAngles angles, double trShoulder, double trElbo
 	pointWorld = tElbow(trElbow, (yRoll(angles.theta5, (dtxRoll(angles.theta4, point)))));
 	//SHOULDER TRANSFORM
 	pointWorld = tShoulder(trShoulder, (zRoll(angles.theta3, (yRoll(angles.theta2, (xRoll(angles.theta1, point)))))));
-
+	animTcl::OutputMessage("Column 4 values in jacobian are %f, %f, %f", pointWorld.x, pointWorld.y, pointWorld.z);
 	return pointWorld;
 }
 glm::dvec4 Jacobian::setColumn5(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point)
@@ -69,7 +72,7 @@ glm::dvec4 Jacobian::setColumn5(rAngles angles, double trShoulder, double trElbo
 	pointWorld = tElbow(trElbow, (dtyRoll(angles.theta5, (xRoll(angles.theta4, point)))));
 	//SHOULDER TRANSFORM
 	pointWorld = tShoulder(trShoulder, (zRoll(angles.theta3, (yRoll(angles.theta2, (xRoll(angles.theta1, point)))))));
-
+	animTcl::OutputMessage("Column 5 values in jacobian are %f, %f, %f", pointWorld.x, pointWorld.y, pointWorld.z);
 	return pointWorld;
 }
 glm::dvec4 Jacobian::setColumn6(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point)
@@ -81,7 +84,7 @@ glm::dvec4 Jacobian::setColumn6(rAngles angles, double trShoulder, double trElbo
 	pointWorld = tElbow(trElbow, (yRoll(angles.theta5, (xRoll(angles.theta4, point)))));
 	//SHOULDER TRANSFORM
 	pointWorld = tShoulder(trShoulder, (zRoll(angles.theta3, (yRoll(angles.theta2, (xRoll(angles.theta1, point)))))));
-
+	animTcl::OutputMessage("Column 6 values in jacobian are %f, %f, %f", pointWorld.x, pointWorld.y, pointWorld.z);
 	return pointWorld;
 }
 glm::dvec4 Jacobian::setColumn7(rAngles angles, double trShoulder, double trElbow, double trWrist, glm::dvec4 point)
@@ -93,7 +96,7 @@ glm::dvec4 Jacobian::setColumn7(rAngles angles, double trShoulder, double trElbo
 	pointWorld = tElbow(trElbow, (yRoll(angles.theta5, (xRoll(angles.theta4, point)))));
 	//SHOULDER TRANSFORM
 	pointWorld = tShoulder(trShoulder, (zRoll(angles.theta3, (yRoll(angles.theta2, (xRoll(angles.theta1, point)))))));
-
+	animTcl::OutputMessage("Column 7 values in jacobian are %f, %f, %f", pointWorld.x, pointWorld.y, pointWorld.z);
 	return pointWorld;
 }
 

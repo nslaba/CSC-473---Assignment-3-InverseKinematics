@@ -164,8 +164,9 @@ void Bob::drawBob() {
 
 void Bob::drawRightHand(rAngles angles)
 {
+	
 	glPushMatrix();
-	glTranslated(0.0, torsoHeight/4.0, z);
+	glTranslated(0.0, 0.0, z);
 	// ARMS
 	// right arm
 	glPushMatrix();
@@ -174,21 +175,24 @@ void Bob::drawRightHand(rAngles angles)
 	glRotated(angles.theta1, 1.0, 0.0, 0.0);
 	glRotated(angles.theta2, 0.0, 1.0, 0.0);
 	glRotated(angles.theta3, 0.0, 0.0, 1.0);
-	glTranslated(0, -L1, 0);
+	
 	
 	//right forearm
 	glPushMatrix();
+	glTranslated(0, -L1, 0);
 	glRotated(angles.theta4, 1.0, 0.0, 0.0);
 	glRotated(angles.theta5, 0.0, 1.0, 0.0);
-	glTranslated(0, -L2, 0);
+	
 
 	// right hand
 	glPushMatrix();	
+	glTranslated(0, -L2, 0);
 	glRotated(angles.theta6, 1.0, 0.0, 0.0);
 	glRotated(angles.theta7, 0.0, 1.0, 0.0);
-	glTranslated(0, -(L3*2.0), 0);
+
 
 	//draw hand
+	glTranslated(0, -L3/2.0, 0);
 	glScaled(limbWidth, L3, 1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);
@@ -196,6 +200,7 @@ void Bob::drawRightHand(rAngles angles)
 	glPopMatrix();
 
 	//draw forearm
+	glTranslated(0, -L2/2.0, 0);
 	glScaled(limbWidth, L2, 1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);
@@ -203,6 +208,7 @@ void Bob::drawRightHand(rAngles angles)
 	glPopMatrix();
 
 	//draw arm
+	glTranslated(0, -L1/2.0, 0);
 	glScaled(limbWidth, L1, 1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);
@@ -233,27 +239,41 @@ void Bob::display(GLenum mode)
 	glEnable(GL_LIGHTING);
 	glMatrixMode(GL_MODELVIEW);
 	/* FOR TESTING DRAW GL GUIDELINE*/
-	/*glPushMatrix();
-		glTranslated(0, 0, 3.0);
+	glPushMatrix();
+	glTranslated(0, 0, z);
+		glScaled(0.1, 0.1, 0.1);
+		glEnable(GL_COLOR_MATERIAL);
+		glColor3f(1.0, 0.0, 0.0);
+		glutSolidCube(1);
+	glPopMatrix();
+	//End effector
+	glPushMatrix();
+		
+		glTranslated(0, 0, z);
+		glRotated(20, 0, 0, 1);
+		glTranslated(0, -L1, 0);
+		glRotated(20, 1, 0, 0);
+		glTranslated(0, -(L2 + L3), 0);
 		glScaled(0.1, 0.1, 0.1);
 		glEnable(GL_COLOR_MATERIAL);
 		glColor3f(1.0, 0.0, 0.0);
 		glutSolidCube(1);
 	glPopMatrix();
 	glPushMatrix();
-		glTranslated(0, -3, 3);
-		glScaled(0.1, 0.1, 0.1);
-		glEnable(GL_COLOR_MATERIAL);
-		glColor3f(1.0, 0.0, 0.0);
-		glutSolidCube(1);
-	glPopMatrix();*/
+	glTranslated(0.9993721, -5.230226, 2.135038);
+	glScaled(0.1, 0.1, 0.1);
+	glEnable(GL_COLOR_MATERIAL);
+	glColor3f(0.0, 1.0, 0.0);
+	glutSolidCube(1);
+	glPopMatrix();
 	/********************************/
 	
 	
 	//Draw Scene
+	drawRightHand(angles);
+	drawBob();
 	
 	drawScene();
-	drawBob();
-	drawRightHand(angles);
+	
 	
 }
