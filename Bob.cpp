@@ -260,7 +260,7 @@ void Bob::display(GLenum mode)
 		glutSolidCube(1);
 	glPopMatrix();
 	glPushMatrix();
-	glTranslated(0.9993721, -5.230226, 2.135038);
+	glTranslated(1.48, -4.07, 2.14);
 	glScaled(0.1, 0.1, 0.1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);

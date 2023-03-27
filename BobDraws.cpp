@@ -21,8 +21,12 @@ int BobDraws::step(double time)
 		Ptarget = drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t);
 		dtX = Ptarget.point - P.point;
 
+		// Temporarily make dtX an eigen vec4 instead.
+		dtX_eigen << dtX.x, dtX.y, dtX.z, 0.0;
+		
+		
 		// PLUG CURR ANGLES INTO JACOBIAN
-		Jacobian j = Jacobian(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, glm::vec4{ P.point,1 });
+		Jacobian j(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, &dtX_eigen);
 
 		// Find BETA
 		BetaSolver beta = BetaSolver(j, dtX);
@@ -30,8 +34,8 @@ int BobDraws::step(double time)
 		dtThetas = j.jacobian.transpose() * beta.beta;
 
 		// turn into degrees
-		dtThetas *= 180.0 / M_PI;
-		animTcl::OutputMessage("theta 1 is: %d\n theta 7 is: %d\n", m_bob->angles.theta1, m_bob->angles.theta7);
+		//dtThetas *= 180.0 / M_PI;
+		//animTcl::OutputMessage("theta 1 is: %d\n theta 7 is: %d\n", m_bob->angles.theta1, m_bob->angles.theta7);
 		// UPDATE THETAS
 		m_bob->angles.theta1 = m_bob->angles.theta1 + dtThetas[0];
 		m_bob->angles.theta2 = m_bob->angles.theta2 + dtThetas[1];
@@ -40,7 +44,7 @@ int BobDraws::step(double time)
 		m_bob->angles.theta5 = m_bob->angles.theta5 + dtThetas[4];
 		m_bob->angles.theta6 = m_bob->angles.theta6 + dtThetas[5];
 		m_bob->angles.theta7 = m_bob->angles.theta7 + dtThetas[6];
-		animTcl::OutputMessage("dttheta 1 is: %f\n dttheta 2 is: %f\n dttheta 3 is: %f\n dttheta 4 is: %f\n dttheta 5 is: %f\n dttheta 6 is: %f\n dttheta 7 is: %f\n", dtThetas[0], dtThetas[1], dtThetas[2], dtThetas[3], dtThetas[4], dtThetas[5], dtThetas[6]);
+		//animTcl::OutputMessage("dttheta 1 is: %f\n dttheta 2 is: %f\n dttheta 3 is: %f\n dttheta 4 is: %f\n dttheta 5 is: %f\n dttheta 6 is: %f\n dttheta 7 is: %f\n", dtThetas[0], dtThetas[1], dtThetas[2], dtThetas[3], dtThetas[4], dtThetas[5], dtThetas[6]);
 
 		// UPDATE P 
 		P = Ptarget;
@@ -59,60 +63,76 @@ int BobDraws::step(double time)
 void BobDraws::initializePs() {
 	// Initialize resting position
 	m_bob->angles = rAngles{ 0.0, 0.0, 20.0, 20.0, 0.0, 0.0, 0.0 };
+	// Create an initial eigen point for end effector
+	endEffector << 1.48, -4.07, 2.14, 1.0; // end effector when at initial resting position
+	//-(m_bob->L1 +m_bob->L2 +m_bob->L3)
+	 
+	//// 2. translate to the elbow
+	//Transformations::translateY(m_bob->L1, endEffector);
+	//// 1.a) rotate by theta3 on z
+	//Transformations::zRoll(m_bob->angles.theta3 * (float)M_PI / 180.0, endEffector);
+	//// 1.b) rotate by theta2 around y
+	//Transformations::yRoll(m_bob->angles.theta2, endEffector);
+	//// 1.c) rotate by theta1 around x
+	//Transformations::xRoll(m_bob->angles.theta1, endEffector);
+
+
+
+	//// 4. translate to wrist
+	//Transformations::translateY(m_bob->L2, endEffector); //here endEffector acts as an alias for the original vector
+	//// 2.a) rotate by theta5 around y
+	//Transformations::yRoll(m_bob->angles.theta5, endEffector);
+	//// 2.b) rotate by theta4 around x
+	//Transformations::xRoll(m_bob->angles.theta4 * (float)M_PI / 180.0, endEffector);
+
 	//
+
+	//
+	//// translate to fingers
+	//Transformations::translateY(m_bob->L3, endEffector);
+	//// 4.a) Rotate by theta7 around y
+	//Transformations::yRoll(m_bob->angles.theta7, endEffector);
+	//// 4.b) Rotate by theta6 around x
+	//Transformations::xRoll(m_bob->angles.theta6, endEffector);
+
 	ControlPoint initial = ControlPoint();
 	initial.empty = false;
-	initial.point = glm::vec3{ 0.0, 0.0, m_bob->z }; 
-	
-	// Get the correct resting point transformations of the point
-	// 1. rotate by theta3 on z
-	//transform = glm::rotate(identity, 20 * (float)M_PI / 180, glm::vec3{ 0,0,1.0 });
-	//initial.point = transform * glm::vec4{ initial.point, 1 };
-	////2. translate on y
-	//transform = glm::translate(translateL1, initial.point);
-	//// 3. Rotate by theta4 on x
-	//transform = glm::rotate(transform, 20 * (float)M_PI / 180, glm::vec3{ 1.0, 0, 0 });
-	//initial.point = transform * glm::vec4{ initial.point, 1 };
-	//// 4. translate on y twice
-	//transform = glm::translate(translateL2L3, initial.point);
-
-	// 1. rotate by theta3 on z
-
-	// 2. translate on y
-
-	// 3. Rotate by theta4 on x
-
-	// 4. translate on y twice
+	initial.point = glm::vec3{ endEffector[0], endEffector[1], endEffector[2]};
 	animTcl::OutputMessage("initial point is: %f %f %f", initial.point.x, initial.point.y, initial.point.z);
-
 	P = initial;
-	animTcl::OutputMessage("the point as vec3 values are %f, %f, %f", P.point.x, P.point.y, P.point.z);
+	//animTcl::OutputMessage("the point as vec3 values are %f, %f, %f", P.point.x, P.point.y, P.point.z);
 	Ptarget = drawingPath->controlPoints[0];
 
 	// update angles to get to the start of the spline
 	dtX = Ptarget.point - P.point;
-
+	// Temporarily make dtX an eigen vec4 instead.
+	dtX_eigen << dtX.x, dtX.y, dtX.z, 0.0;
+	
+	
 	// PLUG CURR ANGLES INTO JACOBIAN
-	animTcl::OutputMessage("initial values are %f, %f, %f", initial.point.x, initial.point.y, initial.point.z);
-	animTcl::OutputMessage("the point as vec4 values are %f, %f, %f", P.point.x, P.point.y, P.point.z);
-	Jacobian j = Jacobian(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, glm::vec4{ P.point,1 });
+	//animTcl::OutputMessage("initial values are %f, %f, %f", initial.point.x, initial.point.y, initial.point.z);
+	//animTcl::OutputMessage("the point as vec4 values are %f, %f, %f", P.point.x, P.point.y, P.point.z);
+	Jacobian j(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, &dtX_eigen);
 	//animTcl::OutputMessage("jacobian x columns are: %d, %d, %d, %d, %d, %d, %d", j.jacobian(0,0), j.jacobian(0,1), j.jacobian(0,2), j.jacobian(0,3), j.jacobian(0,4), j.jacobian(0,5), j.jacobian(0,6));
+	
 	// Find BETA
-	BetaSolver beta = BetaSolver(j, dtX);
+	BetaSolver beta(&j, &dtX);
+	
 	// FIND PSEUDO INVERSE OF JACOBIAN BASED ON BETA
 	dtThetas = j.jacobian.transpose() * beta.beta;
 	animTcl::OutputMessage("Beta x columns are: %f, %f, %f", beta.beta(0), beta.beta(1), beta.beta(2));
 	// turn into degrees
-	dtThetas *= 180.0 / M_PI;
+	//dtThetas *= 180.0 / M_PI;
 	animTcl::OutputMessage("theta 1 is: %f\n theta 7 is: %f\n", m_bob->angles.theta1, m_bob->angles.theta7);
+	
 	// UPDATE THETAS
-	/*m_bob->angles.theta1 = m_bob->angles.theta1 + dtThetas[0];
+	m_bob->angles.theta1 = m_bob->angles.theta1 + dtThetas[0];
 	m_bob->angles.theta2 = m_bob->angles.theta2 + dtThetas[1];
 	m_bob->angles.theta3 = m_bob->angles.theta3 + dtThetas[2];
 	m_bob->angles.theta4 = m_bob->angles.theta4 + dtThetas[3];
 	m_bob->angles.theta5 = m_bob->angles.theta5 + dtThetas[4];
 	m_bob->angles.theta6 = m_bob->angles.theta6 + dtThetas[5];
-	m_bob->angles.theta7 = m_bob->angles.theta7 + dtThetas[6];*/
+	m_bob->angles.theta7 = m_bob->angles.theta7 + dtThetas[6];
 	animTcl::OutputMessage("dttheta 1 is: %f\n dttheta 2 is: %f\n dttheta 3 is: %f\n dttheta 4 is: %f\n dttheta 5 is: %f\n dttheta 6 is: %f\n dttheta 7 is: %f\n", dtThetas[0], dtThetas[1], dtThetas[2], dtThetas[3], dtThetas[4], dtThetas[5], dtThetas[6]);
 	
 }

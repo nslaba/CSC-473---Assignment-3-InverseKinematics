@@ -37,8 +37,8 @@ public:
 	float L3 = 0.5;
 	float z = 3.0;
 
-	//Rest position angles
-	rAngles angles = rAngles{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+	//initial position angles
+	rAngles angles = rAngles{ 0.0, 0.0, 90.0, 0.0, 0.0, 0.0, 0.0 };
 
 
 	// Nescessary functions

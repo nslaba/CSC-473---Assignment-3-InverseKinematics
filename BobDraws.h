@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Jacobian.h"
+#include "Transformations.h"
 #include <GLModel/GLModel.h>
 #include <shared/defs.h>
 #include <util/util.h>
@@ -29,26 +30,19 @@ public:
 private:
 	HermiteSpline* drawingPath;
 	Bob* m_bob;
-	glm::mat4x4 identity{ 1.0 };
-	glm::mat4x4 transform;
-	glm::mat4x4 translateL1{1.0, 0.0, 0.0, 0.0,
-							0.0, 1.0, 0.0, 0.0,
-							0.0, 0.0, 1.0, 0.0,
-							0.0, -m_bob->L1, 0.0, 1.0
-
-	};
-	glm::mat4x4 translateL2L3{ 1.0, 0.0, 0.0, 0.0,
-							0.0, 1.0, 0.0, 0.0,
-							0.0, 0.0, 1.0, 0.0,
-							0.0, -(m_bob->L2 + m_bob->L3), 0.0, 1.0
-
-	};
-
+	
 	void initializePs();
 	Eigen::VectorXd dtThetas;
 	int cPointID = 0;
+
 	glm::dvec3 dtX;
 	ControlPoint Ptarget;
 	ControlPoint P; // Initially it is the starting of the spline
 	double t = 0.001;
+
+	Eigen::Vector4d dtX_eigen;
+	Eigen::Vector4d endEffector;
+
+
+
 };
