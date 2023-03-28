@@ -18,7 +18,7 @@ class Jacobian
 public:
 	// default constructor
 	Jacobian() = default;
-	Jacobian(rAngles angles, double L1, double L2, double L3, Eigen::Vector4d* point);
+	Jacobian(rAngles angles, double L1, double L2, double L3, Eigen::Vector4d& point);
 
 	Eigen::MatrixXd jacobian;
 	// getters and setters

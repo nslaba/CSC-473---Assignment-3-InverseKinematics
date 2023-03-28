@@ -16,12 +16,13 @@
 class BetaSolver
 {
 public:
-	BetaSolver(Jacobian *j, glm::vec3 *dtX);
+	BetaSolver() = default;
+	BetaSolver(Jacobian& j, Eigen::Vector3d& dtX);
 
 	Eigen::Vector3d beta;
 
 	// Solve for beta
-	void betaSolver(Jacobian& j, glm::vec3& dtX);
+	void betaSolver(Jacobian& j, Eigen::Vector3d& dtX);
 
 protected:
 	

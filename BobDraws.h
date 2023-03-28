@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Jacobian.h"
+#include "BetaSolver.h"
 #include "Transformations.h"
 #include <GLModel/GLModel.h>
 #include <shared/defs.h>
@@ -15,7 +15,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "HermiteSpline.h"
 #include <math.h>
-#include "BetaSolver.h"
+
 
 
 class BobDraws :
@@ -35,14 +35,21 @@ private:
 	Eigen::VectorXd dtThetas;
 	int cPointID = 0;
 
-	glm::dvec3 dtX;
 	ControlPoint Ptarget;
 	ControlPoint P; // Initially it is the starting of the spline
 	double t = 0.001;
 
-	Eigen::Vector4d dtX_eigen;
-	Eigen::Vector4d endEffector;
+	glm::dvec3 dtX;
+	Eigen::VectorXd dtX_eigen;
+	Eigen::VectorXd endEffector;
 
-
+	// TEMP EIGEN MATRIX VARIABLES FOR DEBUGGING
+	Eigen::MatrixXd xRoll;
+	Eigen::MatrixXd yRoll;
+	Eigen::MatrixXd zRoll;
+	Eigen::MatrixXd tL1;
+	Eigen::MatrixXd tL2;
+	Eigen::MatrixXd tL3;
+	Eigen::MatrixXd transform;
 
 };

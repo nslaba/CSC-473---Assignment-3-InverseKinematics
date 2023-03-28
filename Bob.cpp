@@ -240,7 +240,7 @@ void Bob::display(GLenum mode)
 	glMatrixMode(GL_MODELVIEW);
 	/* FOR TESTING DRAW GL GUIDELINE*/
 	glPushMatrix();
-	glTranslated(0, 0, z);
+	glTranslated(0, 0, 0);
 		glScaled(0.1, 0.1, 0.1);
 		glEnable(GL_COLOR_MATERIAL);
 		glColor3f(1.0, 0.0, 0.0);
@@ -258,9 +258,10 @@ void Bob::display(GLenum mode)
 		glEnable(GL_COLOR_MATERIAL);
 		glColor3f(1.0, 0.0, 0.0);
 		glutSolidCube(1);
-	glPopMatrix();
+		glPopMatrix();
 	glPushMatrix();
-	glTranslated(1.48, -4.07, 2.14);
+	glTranslated(temp_end_eff.x, temp_end_eff.y, temp_end_eff.z);
+	animTcl::OutputMessage("temp_end_eff is in bob: %f %f %f", temp_end_eff.x, temp_end_eff.y, temp_end_eff.z);
 	glScaled(0.1, 0.1, 0.1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);

@@ -17,16 +17,16 @@ public:
 	Transformations() = default;
 	
 	// Translations
-	static void translateY(double translation, Eigen::Vector4d& point);
-
+	static void translateY(double translation, Eigen::VectorXd& point);
+	static void translateX(double translation, Eigen::VectorXd& point);
 
 	// Rotations
-	static void xRoll(double theta, Eigen::Vector4d& point);
-	static void yRoll(double theta, Eigen::Vector4d& point);
-	static void zRoll(double theta, Eigen::Vector4d& point);
-	static void dtxRoll(double theta, Eigen::Vector4d& point);
-	static void dtyRoll(double theta, Eigen::Vector4d& point);
-	static void dtzRoll(double theta, Eigen::Vector4d& point);
+	static void xRoll(double theta, Eigen::VectorXd& point);
+	static void yRoll(double theta, Eigen::VectorXd& point);
+	static void zRoll(double theta, Eigen::VectorXd& point);
+	static void dtxRoll(double theta, Eigen::VectorXd& point);
+	static void dtyRoll(double theta, Eigen::VectorXd& point);
+	static void dtzRoll(double theta, Eigen::VectorXd& point);
 
 	// Create a series of matrices to multiply together to get one correct transformation matrix
 

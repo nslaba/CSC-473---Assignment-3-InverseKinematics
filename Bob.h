@@ -38,8 +38,11 @@ public:
 	float z = 3.0;
 
 	//initial position angles
-	rAngles angles = rAngles{ 0.0, 0.0, 90.0, 0.0, 0.0, 0.0, 0.0 };
+	//rAngles angles = rAngles{ 0.0, 0.0, 90.0, 0.0, 0.0, 0.0, 0.0 };
+	rAngles angles;
 
+	//TESTING VAR
+	glm::vec3 temp_end_eff{ 0.0, 0.0, 0.0 };
 
 	// Nescessary functions
 	void drawScene();

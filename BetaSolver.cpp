@@ -2,22 +2,19 @@
 
 #include "BetaSolver.h"
 
-BetaSolver::BetaSolver(Jacobian* j, glm::vec3* dtX) 
+BetaSolver::BetaSolver(Jacobian& j, Eigen::Vector3d& dtX) 
 {
-	betaSolver(*j, *dtX);
+	betaSolver(j, dtX);
 }
 
 // Solve for beta
-void BetaSolver::betaSolver(Jacobian& j, glm::vec3& dtX)
+void BetaSolver::betaSolver(Jacobian& j, Eigen::Vector3d& dtX)
 {
-	// Make velocity Eigen
-	Eigen::Vector3d vel;
-	vel << dtX.x, dtX.y, dtX.z ;
 	// Make a j jt matrix (j multiplied by its transpose)
 	Eigen::Matrix3Xd jjt = j.jacobian * j.jacobian.transpose();
 	// Use the eigen properties and functions to solve for beta with Lower Upper triangular
 	Eigen::PartialPivLU<Eigen::Matrix3d> lu(jjt);
-	Eigen::Vector3d b = lu.solve(vel);
+	Eigen::Vector3d b = lu.solve(dtX);
 	beta.col(0) << b[0], b[1], b[2];
 }
 
