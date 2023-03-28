@@ -1,8 +1,67 @@
 #include "Transformations.h"
 
+void printMatrix(Eigen::MatrixXd mat)
+{
 
+	for (int i = 0; i < 4; i++) {
+		animTcl::OutputMessage("%f %f %f %f\n", mat.row(i)[0], mat.row(i)[1], mat.row(i)[2], mat.row(i)[3]);
+	}
+	animTcl::OutputMessage("\n\n");
+}
+Transformations::Transformations(rAngles angles, double L1, double L2, double L3): matrixTransform(4,4)
+{
+	//matrixTransform = translateY(L3) * yRoll(angles.theta7) * xRoll(angles.theta6) * translateY(L2) * yRoll(angles.theta5) * xRoll(angles.theta4) * translateY(L1) * zRoll(angles.theta3) * yRoll(angles.theta2) * xRoll(angles.theta1);
+	matrixTransform = translateZ(-3);
+	matrixTransform = matrixTransform * xRoll(angles.theta1);
+	
+	animTcl::OutputMessage("after sholder xRoll:");
+	printMatrix(matrixTransform);
+	matrixTransform = matrixTransform * yRoll(angles.theta2);
+	
+	animTcl::OutputMessage("after shoulder xRoll and yroll:");
+	printMatrix(matrixTransform);
+	matrixTransform = matrixTransform * zRoll(angles.theta3);
+	
+	animTcl::OutputMessage("\nafter shoulder xRoll yroll and zroll:");
+	printMatrix(matrixTransform);
+	matrixTransform = matrixTransform * translateY(L1);
+	
+	animTcl::OutputMessage("\nat elbow:");
+	printMatrix(matrixTransform);
+	matrixTransform = matrixTransform * xRoll(angles.theta4);
+	matrixTransform = matrixTransform * yRoll(angles.theta5);
+	
+	animTcl::OutputMessage("\nafter elbow xRoll and yroll:");
+	printMatrix(matrixTransform);
+	matrixTransform = matrixTransform * translateY(L2);
+	
+	animTcl::OutputMessage("\nat wrist");
+	printMatrix(matrixTransform);
+	matrixTransform = matrixTransform * xRoll(angles.theta6);
+	matrixTransform = matrixTransform * yRoll(angles.theta7);
+	
+	animTcl::OutputMessage("\nafter wrist xRoll and yRoll:");
+	printMatrix(matrixTransform);
+	matrixTransform = matrixTransform *translateY(L3);
+	
+	animTcl::OutputMessage("\nfinal transform matrix at wrist");
+	printMatrix(matrixTransform);
+}
 
-void Transformations::translateY(double translation, Eigen::VectorXd& point)
+Eigen::Matrix4d Transformations::translateZ(double translation)
+{
+	Eigen::Matrix4d translateZ;
+	translateZ <<
+		1.0, 0.0, 0.0, 0.0,
+		0.0, 1.0, 0.0, 0.0,
+		0.0, 0.0, 1.0, -translation,
+		0.0, 0.0, 0.0, 1.0
+		;
+
+	return translateZ;
+}
+
+Eigen::Matrix4d Transformations::translateY(double translation)
 {
 	Eigen::Matrix4d translateY;
 	translateY <<
@@ -12,10 +71,10 @@ void Transformations::translateY(double translation, Eigen::VectorXd& point)
 		0.0, 0.0, 0.0, 1.0
 		;
 
-	point = translateY * point;
+	return translateY;
 }
 
-void Transformations::translateX(double translation, Eigen::VectorXd& point)
+Eigen::Matrix4d Transformations::translateX(double translation)
 {
 	Eigen::Matrix4d translateX;
 	translateX <<
@@ -25,13 +84,13 @@ void Transformations::translateX(double translation, Eigen::VectorXd& point)
 		0.0, 0.0, 0.0, 1.0
 		;
 
-	point = translateX * point;
+	return translateX;
 }
 
-void Transformations::xRoll(double theta, Eigen::VectorXd& point)
+Eigen::Matrix4d Transformations::xRoll(double theta)
 {
 	// THETA IS IN RADIANS
-	theta *= (float)M_PI / 180.0;
+	theta *= 3.141592653589 / 180.0;
 	Eigen::Matrix4d xRoll;
 	xRoll <<
 		1.0, 0.0, 0.0, 0.0,
@@ -39,14 +98,14 @@ void Transformations::xRoll(double theta, Eigen::VectorXd& point)
 		0.0, sin(theta), cos(theta), 0.0,
 		0.0, 0.0, 0.0, 1.0
 		;
-
-	point = xRoll * point;
+	
+	return xRoll;
 }
-void Transformations::yRoll(double theta, Eigen::VectorXd& point)
+Eigen::Matrix4d Transformations::yRoll(double theta)
 {
 
 	// THETA IS IN RADIANS
-	theta *= (float)M_PI / 180.0;
+	theta *= 3.141592653589 / 180.0;
 	Eigen::Matrix4d yRoll;
 	yRoll <<
 		cos(theta), 0.0, sin(theta), 0.0,
@@ -54,14 +113,14 @@ void Transformations::yRoll(double theta, Eigen::VectorXd& point)
 		-sin(theta), 0.0, cos(theta), 0.0,
 		0.0, 0.0, 0.0, 1.0
 		;
-
-	point = yRoll * point;
+	
+	return yRoll;
 }
-void Transformations::zRoll(double theta, Eigen::VectorXd& point)
+Eigen::Matrix4d Transformations::zRoll(double theta)
 {
 
 	// THETA IS IN RADIANS
-	theta *= (float)M_PI / 180.0;
+	theta *= 3.141592653589 / 180.0;
 	Eigen::Matrix4d zRoll;
 	zRoll <<
 		cos(theta), -sin(theta), 0.0, 0.0,
@@ -69,13 +128,13 @@ void Transformations::zRoll(double theta, Eigen::VectorXd& point)
 		0.0, 0.0, 1.0, 0.0,
 		0.0, 0.0, 0.0, 1.0
 		;
-
-	point = zRoll * point;
+	
+	return zRoll;
 }
-void Transformations::dtxRoll(double theta, Eigen::VectorXd& point)
+Eigen::Matrix4d Transformations::dtxRoll(double theta)
 {
 	// THETA IS IN RADIANS
-	theta *= (float)M_PI / 180.0;
+	theta *= 3.141592653589 / 180.0;
 	Eigen::Matrix4d dtxRoll;
 	dtxRoll <<
 		0.0, 0.0, 0.0, 0.0,
@@ -84,12 +143,12 @@ void Transformations::dtxRoll(double theta, Eigen::VectorXd& point)
 		0.0, 0.0, 0.0, 0.0
 		;
 
-	point = dtxRoll * point;
+	return dtxRoll;
 }
-void Transformations::dtyRoll(double theta, Eigen::VectorXd& point)
+Eigen::Matrix4d Transformations::dtyRoll(double theta)
 {
 	// THETA IS IN RADIANS
-	theta *= (float)M_PI / 180.0;
+	theta *= 3.141592653589 / 180.0;
 	Eigen::Matrix4d dtyRoll;
 	dtyRoll <<
 		-sin(theta), 0.0, cos(theta), 0.0,
@@ -98,12 +157,12 @@ void Transformations::dtyRoll(double theta, Eigen::VectorXd& point)
 		0.0, 0.0, 0.0, 0.0
 		;
 
-	point = dtyRoll * point;
+	return dtyRoll;
 }
-void Transformations::dtzRoll(double theta, Eigen::VectorXd& point)
+Eigen::Matrix4d Transformations::dtzRoll(double theta)
 {
 	// THETA IS IN RADIANS
-	theta *= (float)M_PI / 180.0;
+	theta *= 3.141592653589 / 180.0;
 	Eigen::Matrix4d dtzRoll;
 	dtzRoll <<
 		-sin(theta), -cos(theta), 0.0, 0.0,
@@ -111,5 +170,6 @@ void Transformations::dtzRoll(double theta, Eigen::VectorXd& point)
 		0.0, 0.0, 0.0, 0.0,
 		0.0, 0.0, 0.0, 0.0
 		;
-	point = dtzRoll * point;
+	return dtzRoll;
 }
+

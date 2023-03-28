@@ -67,73 +67,19 @@ int BobDraws::step(double time)
 	return 0;
 }
 
+
+
 void BobDraws::initializePs() {
 	
 	// Initialize resting position in degrees
 	m_bob->angles = rAngles{ 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0 };
 	// Create an initial eigen point for end effector
 	//endEffector << 1.48, -4.07, 2.14, 1.0; // end effector when at initial resting position
-	endEffector << 0.0, 0.0, 3.0, 1.0; 
+	endEffector << 0.0, 0.0, 0.0, 1.0; 
 
-	// Call a series of functions to update the end effector to rest pos
-	////////////////////////////TEST
-	xRoll <<
-		1.0, 0.0, 0.0, 0.0,
-		0.0, cos(10*(float)M_PI/180.0), -sin(10 * (float)M_PI / 180.0), 0.0,
-		0.0, sin(10 * (float)M_PI / 180.0), cos(10 * (float)M_PI / 180.0), 0.0,
-		0.0, 0.0, 0.0, 1.0
-		;
-	
-	yRoll <<
-		cos(10 * (float)M_PI / 180.0), 0.0, sin(10 * (float)M_PI / 180.0), 0.0,
-		0.0, 1.0, 0.0, 0.0,
-		-sin(10 * (float)M_PI / 180.0), 0.0, cos(10 * (float)M_PI / 180.0), 0.0,
-		0.0, 0.0, 0.0, 1.0
-		;
-	zRoll <<
-		cos(10 * (float)M_PI / 180.0), -sin(10 * (float)M_PI / 180.0), 0.0, 0.0,
-		sin(10 * (float)M_PI / 180.0), cos(10 * (float)M_PI / 180.0), 0.0, 0.0,
-		0.0, 0.0, 1.0, 0.0,
-		0.0, 0.0, 0.0, 1.0
-		;
-	tL1 <<
-		1.0, 0.0, 0.0, 0.0,
-		0.0, 1.0, 0.0, -m_bob->L1,
-		0.0, 0.0, 1.0, 0.0,
-		0.0, 0.0, 0.0, 1.0
-		;
-	tL2 <<
-		1.0, 0.0, 0.0, 0.0,
-		0.0, 1.0, 0.0, -m_bob->L2,
-		0.0, 0.0, 1.0, 0.0,
-		0.0, 0.0, 0.0, 1.0
-		;
-	tL3 <<
-		1.0, 0.0, 0.0, 0.0,
-		0.0, 1.0, 0.0, -m_bob->L3,
-		0.0, 0.0, 1.0, 0.0,
-		0.0, 0.0, 0.0, 1.0
-		;
+	Transformations transform(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3);
 
-	endEffector = tL3 * xRoll * yRoll * tL2 * xRoll * yRoll * tL1 * xRoll * yRoll * zRoll * endEffector;
-
-	//////////////////////////////////////////////////
-	// SHOULDER
-	/*Transformations::xRoll(m_bob->angles.theta1, endEffector);
-	Transformations::yRoll(m_bob->angles.theta2, endEffector);
-	Transformations::zRoll(m_bob->angles.theta3, endEffector);
-	
-	Transformations::translateY(m_bob->L1, endEffector);*/
-	//// ELBOW
-	//Transformations::xRoll(m_bob->angles.theta4, endEffector);
-	//Transformations::yRoll(m_bob->angles.theta5, endEffector);
-	//
-	//Transformations::translateY(m_bob->L2, endEffector);
-	//// WRIST
-	//Transformations::xRoll(m_bob->angles.theta6, endEffector);
-	//Transformations::yRoll(m_bob->angles.theta7, endEffector);
-	//
-	//Transformations::translateY(m_bob->L3, endEffector);
+	endEffector = transform.matrixTransform * endEffector;
 
 	m_bob->temp_end_eff = { endEffector[0], endEffector[1], endEffector[2] };
 	animTcl::OutputMessage("temp_end_eff is: %f %f %f", m_bob->temp_end_eff.x, m_bob->temp_end_eff.y, m_bob->temp_end_eff.z);

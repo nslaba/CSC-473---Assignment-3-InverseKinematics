@@ -15,19 +15,24 @@ class Transformations
 public:
 	// default constructor
 	Transformations() = default;
-	
+	Transformations(rAngles angles, double L1, double L2, double L3);
+
+	Eigen::MatrixXd matrixTransform;
+
 	// Translations
-	static void translateY(double translation, Eigen::VectorXd& point);
-	static void translateX(double translation, Eigen::VectorXd& point);
+	Eigen::Matrix4d translateZ(double translation);
+	Eigen::Matrix4d translateY(double translation);
+	Eigen::Matrix4d translateX(double translation);
 
 	// Rotations
-	static void xRoll(double theta, Eigen::VectorXd& point);
-	static void yRoll(double theta, Eigen::VectorXd& point);
-	static void zRoll(double theta, Eigen::VectorXd& point);
-	static void dtxRoll(double theta, Eigen::VectorXd& point);
-	static void dtyRoll(double theta, Eigen::VectorXd& point);
-	static void dtzRoll(double theta, Eigen::VectorXd& point);
+	Eigen::Matrix4d xRoll(double theta);
+	Eigen::Matrix4d yRoll(double theta);
+	Eigen::Matrix4d zRoll(double theta);
+	Eigen::Matrix4d dtxRoll(double theta);
+	Eigen::Matrix4d dtyRoll(double theta);
+	Eigen::Matrix4d dtzRoll(double theta);
 
+	
 	// Create a series of matrices to multiply together to get one correct transformation matrix
 
 protected:
