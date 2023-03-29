@@ -10,8 +10,12 @@ void printMatrix(Eigen::MatrixXd mat)
 }
 Transformations::Transformations(rAngles angles, double L1, double L2, double L3): matrixTransform(4,4)
 {
-	//matrixTransform = translateY(L3) * yRoll(angles.theta7) * xRoll(angles.theta6) * translateY(L2) * yRoll(angles.theta5) * xRoll(angles.theta4) * translateY(L1) * zRoll(angles.theta3) * yRoll(angles.theta2) * xRoll(angles.theta1);
-	matrixTransform = translateZ(-3);
+	// TEMPORARY TRANSLATION TO MATCH WITH NIMA
+	//matrixTransform = translateX(-0.6);
+	//matrixTransform = matrixTransform * translateY(-1.5);
+	///////////////////////////
+	/////DONT FORGET TO FIX!!!!!
+	matrixTransform =  translateZ(-3);
 	matrixTransform = matrixTransform * xRoll(angles.theta1);
 	
 	animTcl::OutputMessage("after sholder xRoll:");
@@ -78,7 +82,7 @@ Eigen::Matrix4d Transformations::translateX(double translation)
 {
 	Eigen::Matrix4d translateX;
 	translateX <<
-		1.0, 0.0, 0.0, translation,
+		1.0, 0.0, 0.0, -translation,
 		0.0, 1.0, 0.0, 0.0,
 		0.0, 0.0, 1.0, 0.0,
 		0.0, 0.0, 0.0, 1.0
