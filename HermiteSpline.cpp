@@ -159,12 +159,12 @@ void HermiteSpline::load(std::string filename)
 		char* next = NULL;
 		char* pX = strtok_s(const_cast<char*>(fileLine.c_str()), " ", &next);
 		std::string fpx(pX);
-		controlPoint.point.x = std::stof(fpx);
+		controlPoint.point.x = std::stof(fpx)/2.0;
 
 		
 		char* pY = strtok_s(NULL, " ", &next);
 		std::string fpy(pY);
-		controlPoint.point.y = std::stof(fpy)/1.5;
+		controlPoint.point.y = std::stof(fpy)/2.5;
 	
 
 		controlPoint.point.z = 0.1;

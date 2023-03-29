@@ -28,71 +28,63 @@ Jacobian::Jacobian(rAngles angles, double L1, double L2, double L3, Eigen::Vecto
 
 void Jacobian::setColumn1(rAngles angles, double trShoulder, double trElbow, double trWrist, Eigen::Vector4d point)
 {
-	point = translateZ(-3) * tShoulder(trShoulder) * zRoll(angles.theta3) * yRoll(angles.theta2) * dtxRoll(angles.theta1)
-		* tElbow(trElbow) * yRoll(angles.theta5) * xRoll(angles.theta4)
-		* tWrist(trWrist) * yRoll(angles.theta7) * xRoll(angles.theta6) * point;
-	/*point = translateZ(-3) * tShoulder(trShoulder) * zRoll(angles.theta3) * yRoll(angles.theta2) * dtxRoll(angles.theta1)
-		* tElbow(trElbow) * yRoll(angles.theta5) * xRoll(angles.theta4)
-		* tWrist(trWrist) * yRoll(angles.theta7) * xRoll(angles.theta6) * point;*/
+	point = translateZ(-3)  * zRoll(angles.theta3) * yRoll(angles.theta2) * dtxRoll(angles.theta1) * tShoulder(trShoulder)
+		 * yRoll(angles.theta5) * xRoll(angles.theta4) * tElbow(trElbow)
+		 * yRoll(angles.theta7) * zRoll(angles.theta6) * tWrist(trWrist) * point;
+
 
 	jacobian.col(0) << point[0], point[1], point[2];
 }
 void Jacobian::setColumn2(rAngles angles, double trShoulder, double trElbow, double trWrist, Eigen::Vector4d point)
 {
-	//point = yRoll(angles.theta7) * xRoll(angles.theta6) * point;
-	point = translateZ(-3) * tShoulder(trShoulder) * zRoll(angles.theta3) * dtyRoll(angles.theta2) * xRoll(angles.theta1)
-		* tElbow(trElbow) * yRoll(angles.theta5) * xRoll(angles.theta4)
-		* tWrist(trWrist) * yRoll(angles.theta7) * xRoll(angles.theta6) * point;
-	//animTcl::OutputMessage("Column 2 values in jacobian are %f, %f, %f", pointWorld[0], pointWorld[1], pointWorld[2]);
+	
+	point = translateZ(-3) * zRoll(angles.theta3) * dtyRoll(angles.theta2) * xRoll(angles.theta1) * tShoulder(trShoulder)
+		* yRoll(angles.theta5) * xRoll(angles.theta4) * tElbow(trElbow)
+		* yRoll(angles.theta7) * zRoll(angles.theta6) * tWrist(trWrist) * point;
+
 	jacobian.col(1) << point[0], point[1], point[2];
 }
 void Jacobian::setColumn3(rAngles angles, double trShoulder, double trElbow, double trWrist, Eigen::Vector4d point)
-{
+{	
+	point = translateZ(-3) * dtzRoll(angles.theta3) * yRoll(angles.theta2) * xRoll(angles.theta1) * tShoulder(trShoulder)
+		* yRoll(angles.theta5) * xRoll(angles.theta4) * tElbow(trElbow)
+		* yRoll(angles.theta7) * zRoll(angles.theta6) * tWrist(trWrist) * point;
 	
-	//point = yRoll(angles.theta7) * xRoll(angles.theta6) * point;
-	point = translateZ(-3) * tShoulder(trShoulder) * dtzRoll(angles.theta3) * yRoll(angles.theta2) * xRoll(angles.theta1)
-		* tElbow(trElbow) * yRoll(angles.theta5) * xRoll(angles.theta4)
-		* tWrist(trWrist) * yRoll(angles.theta7) * xRoll(angles.theta6) * point;
-	//animTcl::OutputMessage("Column 3 values in jacobian are %f, %f, %f", pointWorld[0], pointWorld[1], pointWorld[2]);
 	jacobian.col(2) << point[0], point[1], point[2];
 }
 void Jacobian::setColumn4(rAngles angles, double trShoulder, double trElbow, double trWrist, Eigen::Vector4d point)
 {
-	//point = yRoll(angles.theta7) * xRoll(angles.theta6) * point;
-	point = translateZ(-3) * tShoulder(trShoulder) * zRoll(angles.theta3) * yRoll(angles.theta2) * xRoll(angles.theta1)
-		* tElbow(trElbow) * yRoll(angles.theta5) * dtxRoll(angles.theta4)
-		* tWrist(trWrist) * yRoll(angles.theta7) * xRoll(angles.theta6) * point;
-	//animTcl::OutputMessage("Column 4 values in jacobian are %f, %f, %f", pointWorld[0], pointWorld[1], pointWorld[2]);
+	point = translateZ(-3) * zRoll(angles.theta3) * yRoll(angles.theta2) * xRoll(angles.theta1) * tShoulder(trShoulder)
+		* yRoll(angles.theta5) * dtxRoll(angles.theta4) * tElbow(trElbow)
+		* yRoll(angles.theta7) * zRoll(angles.theta6) * tWrist(trWrist) * point;
+	
 	jacobian.col(3) << point[0], point[1], point[2];
 }
 void Jacobian::setColumn5(rAngles angles, double trShoulder, double trElbow, double trWrist, Eigen::Vector4d point)
 {
 	
-	//point = yRoll(angles.theta7) * xRoll(angles.theta6) * point;
-	point = translateZ(-3) * tShoulder(trShoulder) * zRoll(angles.theta3) * yRoll(angles.theta2) * xRoll(angles.theta1)
-		* tElbow(trElbow) * dtyRoll(angles.theta5) * xRoll(angles.theta4)
-		* tWrist(trWrist) * yRoll(angles.theta7) * xRoll(angles.theta6) * point;
-	//animTcl::OutputMessage("Column 5 values in jacobian are %f, %f, %f", pointWorld[0], pointWorld[1], pointWorld[2]);
+	point = translateZ(-3) * zRoll(angles.theta3) * yRoll(angles.theta2) * xRoll(angles.theta1) * tShoulder(trShoulder)
+		* dtyRoll(angles.theta5) * xRoll(angles.theta4) * tElbow(trElbow)
+		* yRoll(angles.theta7) * zRoll(angles.theta6) * tWrist(trWrist) * point;
+	
 	jacobian.col(4) << point[0], point[1], point[2];
 }
 void Jacobian::setColumn6(rAngles angles, double trShoulder, double trElbow, double trWrist, Eigen::Vector4d point)
 {
 
+	point = translateZ(-3)* zRoll(angles.theta3)* yRoll(angles.theta2)* xRoll(angles.theta1)* tShoulder(trShoulder)
+		* yRoll(angles.theta5)* xRoll(angles.theta4)* tElbow(trElbow)
+		* yRoll(angles.theta7)* dtzRoll(angles.theta6)* tWrist(trWrist)* point;
 	
-	//point = yRoll(angles.theta7) * dtxRoll(angles.theta6) * point;
-	point = translateZ(-3) * tShoulder(trShoulder) * zRoll(angles.theta3) * yRoll(angles.theta2) * xRoll(angles.theta1)
-		* tElbow(trElbow) * yRoll(angles.theta5) * xRoll(angles.theta4)
-		* tWrist(trWrist) * yRoll(angles.theta7) * dtxRoll(angles.theta6) * point;
-	//animTcl::OutputMessage("Column 6 values in jacobian are %f, %f, %f", pointWorld[0], pointWorld[1], pointWorld[2]);
 	jacobian.col(5) << point[0], point[1], point[2];
 }
 void Jacobian::setColumn7(rAngles angles, double trShoulder, double trElbow, double trWrist, Eigen::Vector4d point)
 {
-	//point = xRoll(angles.theta6) * point;
 
-	point = translateZ(-3) * tShoulder(trShoulder) * zRoll(angles.theta3) * yRoll(angles.theta2) * xRoll(angles.theta1)
-		* tElbow(trElbow) * yRoll(angles.theta5) * xRoll(angles.theta4)
-		* tWrist(trWrist) * dtyRoll(angles.theta7) * xRoll(angles.theta6) * point;
+	point = translateZ(-3)* zRoll(angles.theta3)* yRoll(angles.theta2)* xRoll(angles.theta1)* tShoulder(trShoulder)
+		* yRoll(angles.theta5)* xRoll(angles.theta4)* tElbow(trElbow)
+		* dtyRoll(angles.theta7)* zRoll(angles.theta6)* tWrist(trWrist)* point;
+
 	// Set the Jacobian column
 	jacobian.col(6) << point[0], point[1], point[2];
 }
@@ -103,7 +95,7 @@ Eigen::Matrix4d Jacobian::translateZ(double translation)
 	translateZ <<
 		1.0, 0.0, 0.0, 0.0,
 		0.0, 1.0, 0.0, 0.0,
-		0.0, 0.0, 1.0, -translation,
+		0.0, 0.0, 1.0, translation,
 		0.0, 0.0, 0.0, 1.0
 		;
 
@@ -115,7 +107,7 @@ Eigen::Matrix4d Jacobian::tShoulder(double translation)
 	Eigen::Matrix4d tShoulder;
 	tShoulder<<
 		1.0, 0.0, 0.0, 0.0,
-		0.0, 1.0, 0.0, -translation,
+		0.0, 1.0, 0.0, translation,
 		0.0, 0.0, 1.0, 0.0,
 		0.0, 0.0, 0.0, 1.0
 	;
@@ -128,7 +120,7 @@ Eigen::Matrix4d Jacobian::tElbow(double translation)
 	Eigen::Matrix4d tElbow;
 	tElbow <<
 		1.0, 0.0, 0.0, 0.0,
-		0.0, 1.0, 0.0, -translation,
+		0.0, 1.0, 0.0, translation,
 		0.0, 0.0, 1.0, 0.0,
 		0.0, 0.0, 0.0, 1.0
 	;
@@ -151,8 +143,7 @@ Eigen::Matrix4d Jacobian::tWrist(double translation)
 
 Eigen::Matrix4d Jacobian::xRoll(double theta)
 {
-	// THETA IN RADIANS
-	theta *= 3.141592653589 / 180.0;
+	
 
 	Eigen::Matrix4d xRoll;
 	xRoll <<
@@ -167,8 +158,7 @@ Eigen::Matrix4d Jacobian::xRoll(double theta)
 Eigen::Matrix4d Jacobian::yRoll(double theta)
 {
 
-	// THETA IS IN RADIANS
-	theta *= 3.141592653589 / 180.0;
+	
 
 	Eigen::Matrix4d yRoll;
 	yRoll <<
@@ -183,8 +173,6 @@ Eigen::Matrix4d Jacobian::yRoll(double theta)
 Eigen::Matrix4d Jacobian::zRoll(double theta)
 {
 
-	// THETA IS IN RADIANS
-	theta *= 3.141592653589 / 180.0;
 
 	Eigen::Matrix4d zRoll;
 	zRoll <<
@@ -198,8 +186,7 @@ Eigen::Matrix4d Jacobian::zRoll(double theta)
 }
 Eigen::Matrix4d Jacobian::dtxRoll(double theta)
 {
-	// THETA IS IN RADIANS
-	theta *= 3.141592653589 / 180.0;
+	
 	Eigen::Matrix4d dtxRoll;
 	
 	dtxRoll <<
@@ -213,8 +200,7 @@ Eigen::Matrix4d Jacobian::dtxRoll(double theta)
 }
 Eigen::Matrix4d Jacobian::dtyRoll(double theta)
 {
-	// THETA IS IN RADIANS
-	theta *= 3.141592653589 / 180.0;
+	
 
 	Eigen::Matrix4d dtyRoll;
 	dtyRoll <<
@@ -228,8 +214,7 @@ Eigen::Matrix4d Jacobian::dtyRoll(double theta)
 }
 Eigen::Matrix4d Jacobian::dtzRoll(double theta)
 {
-	// THETA IS IN RADIANS
-	theta *= 3.141592653589 / 180.0;
+	
 
 	Eigen::Matrix4d dtzRoll;
 	dtzRoll <<

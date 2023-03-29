@@ -164,6 +164,7 @@ void Bob::drawBob() {
 
 void Bob::drawRightHand(rAngles angles)
 {
+	// NOTE : only turn thetas into degrees when drawing
 	
 	glPushMatrix();
 	glTranslated(0.0, 0.0, z);
@@ -172,23 +173,23 @@ void Bob::drawRightHand(rAngles angles)
 	glPushMatrix();
 	
 	// 3 DOF for Shoulder
-	glRotated(angles.theta1, 1.0, 0.0, 0.0);
-	glRotated(angles.theta2, 0.0, 1.0, 0.0);
-	glRotated(angles.theta3, 0.0, 0.0, 1.0);
+	glRotated(angles.theta1 * 180.0 / 3.141592653589, 1.0, 0.0, 0.0);
+	glRotated(angles.theta2 * 180.0 / 3.141592653589, 0.0, 1.0, 0.0);
+	glRotated(angles.theta3 * 180.0 / 3.141592653589, 0.0, 0.0, 1.0);
 	
 	
 	//right forearm
 	glPushMatrix();
 	glTranslated(0, -L1, 0);
-	glRotated(angles.theta4, 1.0, 0.0, 0.0);
-	glRotated(angles.theta5, 0.0, 1.0, 0.0);
+	glRotated(angles.theta4 * 180.0 / 3.141592653589, 1.0, 0.0, 0.0);
+	glRotated(angles.theta5 * 180.0 / 3.141592653589, 0.0, 1.0, 0.0);
 	
 
 	// right hand
 	glPushMatrix();	
 	glTranslated(0, -L2, 0);
-	glRotated(angles.theta6, 1.0, 0.0, 0.0);
-	glRotated(angles.theta7, 0.0, 1.0, 0.0);
+	glRotated(angles.theta6 * 180.0 / 3.141592653589, 0.0, 0.0, 1.0);
+	glRotated(angles.theta7 * 180.0 / 3.141592653589, 0.0, 1.0, 0.0);
 
 
 	//draw hand
@@ -259,14 +260,24 @@ void Bob::display(GLenum mode)
 		glColor3f(1.0, 0.0, 0.0);
 		glutSolidCube(1);
 		glPopMatrix();
+	// End effector at beginning
 	glPushMatrix();
 	glTranslated(temp_end_eff.x, temp_end_eff.y, temp_end_eff.z);
-	animTcl::OutputMessage("temp_end_eff is in bob: %f %f %f", temp_end_eff.x, temp_end_eff.y, temp_end_eff.z);
 	glScaled(0.1, 0.1, 0.1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);
 	glutSolidCube(1);
 	glPopMatrix();
+
+	// target point
+	glPushMatrix();
+	glTranslated(target_point.x, target_point.y, target_point.z);
+	glScaled(0.1, 0.1, 0.1);
+	glEnable(GL_COLOR_MATERIAL);
+	glColor3f(1.0, 1.0, 1.0);
+	glutSolidCube(1);
+	glPopMatrix();
+
 	/********************************/
 	
 	

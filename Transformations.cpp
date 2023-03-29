@@ -41,7 +41,7 @@ Transformations::Transformations(rAngles angles, double L1, double L2, double L3
 	
 	animTcl::OutputMessage("\nat wrist");
 	printMatrix(matrixTransform);
-	matrixTransform = matrixTransform * xRoll(angles.theta6);
+	matrixTransform = matrixTransform * zRoll(angles.theta6);
 	matrixTransform = matrixTransform * yRoll(angles.theta7);
 	
 	animTcl::OutputMessage("\nafter wrist xRoll and yRoll:");
@@ -93,8 +93,7 @@ Eigen::Matrix4d Transformations::translateX(double translation)
 
 Eigen::Matrix4d Transformations::xRoll(double theta)
 {
-	// THETA IS IN RADIANS
-	theta *= 3.141592653589 / 180.0;
+	
 	Eigen::Matrix4d xRoll;
 	xRoll <<
 		1.0, 0.0, 0.0, 0.0,
@@ -108,8 +107,7 @@ Eigen::Matrix4d Transformations::xRoll(double theta)
 Eigen::Matrix4d Transformations::yRoll(double theta)
 {
 
-	// THETA IS IN RADIANS
-	theta *= 3.141592653589 / 180.0;
+	
 	Eigen::Matrix4d yRoll;
 	yRoll <<
 		cos(theta), 0.0, sin(theta), 0.0,
@@ -123,8 +121,7 @@ Eigen::Matrix4d Transformations::yRoll(double theta)
 Eigen::Matrix4d Transformations::zRoll(double theta)
 {
 
-	// THETA IS IN RADIANS
-	theta *= 3.141592653589 / 180.0;
+	
 	Eigen::Matrix4d zRoll;
 	zRoll <<
 		cos(theta), -sin(theta), 0.0, 0.0,
@@ -137,8 +134,7 @@ Eigen::Matrix4d Transformations::zRoll(double theta)
 }
 Eigen::Matrix4d Transformations::dtxRoll(double theta)
 {
-	// THETA IS IN RADIANS
-	theta *= 3.141592653589 / 180.0;
+	
 	Eigen::Matrix4d dtxRoll;
 	dtxRoll <<
 		0.0, 0.0, 0.0, 0.0,
@@ -151,8 +147,7 @@ Eigen::Matrix4d Transformations::dtxRoll(double theta)
 }
 Eigen::Matrix4d Transformations::dtyRoll(double theta)
 {
-	// THETA IS IN RADIANS
-	theta *= 3.141592653589 / 180.0;
+	
 	Eigen::Matrix4d dtyRoll;
 	dtyRoll <<
 		-sin(theta), 0.0, cos(theta), 0.0,
@@ -165,8 +160,7 @@ Eigen::Matrix4d Transformations::dtyRoll(double theta)
 }
 Eigen::Matrix4d Transformations::dtzRoll(double theta)
 {
-	// THETA IS IN RADIANS
-	theta *= 3.141592653589 / 180.0;
+	
 	Eigen::Matrix4d dtzRoll;
 	dtzRoll <<
 		-sin(theta), -cos(theta), 0.0, 0.0,

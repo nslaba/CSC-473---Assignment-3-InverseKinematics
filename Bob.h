@@ -43,6 +43,7 @@ public:
 
 	//TESTING VAR
 	glm::vec3 temp_end_eff{ 0.0, 0.0, 0.0 };
+	glm::vec3 target_point{ 0.0, 0.0, 0.0 };
 
 	// Nescessary functions
 	void drawScene();

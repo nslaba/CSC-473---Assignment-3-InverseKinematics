@@ -32,24 +32,21 @@ private:
 	Bob* m_bob;
 	
 	void initializePs();
-	Eigen::VectorXd dtThetas;
-	int cPointID = 0;
-
-	ControlPoint Ptarget;
-	ControlPoint P; // Initially it is the starting of the spline
 	double t = 0.001;
 
+	/* VARIABLES FOR THE ENTIRE IKSIM*/
+	Eigen::VectorXd dtThetas;
+	int cPointID = 0;
 	glm::dvec3 dtX;
-	Eigen::VectorXd dtX_eigen;
+	Eigen::Vector3d dtX_eigen;
+	// End effector in world coordinates AKA Pinitial
 	Eigen::VectorXd endEffector;
+	// P target in world coordinates
+	Eigen::VectorXd Ptarget;
 
-	// TEMP EIGEN MATRIX VARIABLES FOR DEBUGGING
-	Eigen::MatrixXd xRoll;
-	Eigen::MatrixXd yRoll;
-	Eigen::MatrixXd zRoll;
-	Eigen::MatrixXd tL1;
-	Eigen::MatrixXd tL2;
-	Eigen::MatrixXd tL3;
-	Eigen::MatrixXd transform;
+	/* VARIABLES NEEDED FOR GETTING TO THE START OF THE SPLINE */
+	float lerping_to_beginning_of_spline = 0.01;
+	// the intermediate lerping end point
+	Eigen::VectorXd intermediateEnd;
 
 };
