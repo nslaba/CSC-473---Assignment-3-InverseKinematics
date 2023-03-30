@@ -62,7 +62,7 @@
     <ClCompile Include="BetaSolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Transformations.cpp">
+    <ClCompile Include="EndEffectorWorldCoord.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -127,7 +127,7 @@
     <ClInclude Include="BetaSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Transformations.h">
+    <ClInclude Include="EndEffectorWorldCoord.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

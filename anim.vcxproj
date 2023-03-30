@@ -119,7 +119,7 @@
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="BaseSystem.cpp" />
     <ClCompile Include="ThreeDModel.cpp" />
-    <ClCompile Include="Transformations.cpp" />
+    <ClCompile Include="EndEffectorWorldCoord.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseSystem.h" />
@@ -142,7 +142,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Spring.h" />
     <ClInclude Include="ThreeDModel.h" />
-    <ClInclude Include="Transformations.h" />
+    <ClInclude Include="EndEffectorWorldCoord.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GLModel\GLModel.vcxproj">

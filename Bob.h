@@ -32,14 +32,15 @@ public:
 	float torsoHeight = WallHeight / 4.0;
 	float limbHeight = WallHeight / 8.0;
 	float limbWidth = WallHeight / 30.0;
-	long float L1 = 2.0;
+	float L1 = 2.0;
 	float L2 = 2.0;
 	float L3 = 0.5;
-	float z = 3.0;
+	float z = 2.0;
 
 	//initial position angles
 	//rAngles angles = rAngles{ 0.0, 0.0, 90.0, 0.0, 0.0, 0.0, 0.0 };
 	rAngles angles;
+	
 
 	//TESTING VAR
 	glm::vec3 temp_end_eff{ 0.0, 0.0, 0.0 };
