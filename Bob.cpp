@@ -278,6 +278,8 @@ void Bob::display(GLenum mode)
 	glutSolidCube(1);
 	glPopMatrix();
 
+	
+
 	/********************************/
 	
 	

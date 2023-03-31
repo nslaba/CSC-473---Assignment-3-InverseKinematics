@@ -292,7 +292,7 @@ void HermiteSpline::display(GLenum mode)
 	glPushMatrix();
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	
-
+	
 	glLineWidth(0.5);
 	glBegin(GL_LINE_STRIP);
 	glColor3f(1, 1, 1);
@@ -312,8 +312,6 @@ void HermiteSpline::display(GLenum mode)
 	glVertex3f(controlPoints[numKnots - 1].point.x, controlPoints[numKnots - 1].point.y, 0.1);
 	
 	glEnd();
-
-
 	
 	//glColor3f(1, 1, 1);
 

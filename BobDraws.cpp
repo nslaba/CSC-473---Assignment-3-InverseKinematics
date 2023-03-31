@@ -15,62 +15,152 @@ int BobDraws::step(double time)
 {
 	/***************************************************************/
 	/* FIRST GET TO SPLINE lerp function */
-	// for now only call lerp 10 times although I will have to call it the right amount of times to get to target eventually
-	
-	end << drawingPath->controlPoints[0].point.x, drawingPath->controlPoints[0].point.y, drawingPath->controlPoints[0].point.z, 1.0;
-	
-	if (lerp_iteration <= 100) {
-		lerp_iteration++;
-		// I should update P_endEffector, but I shouldn't update P_target it should always be end of spline
-		animTcl::OutputMessage("lerp iteration is: %d", lerp_iteration);
-		animTcl::OutputMessage("lerp scalar is: %f", lerp_iteration * 0.01);
-		lerp(start, end, 0.01*lerp_iteration);
 		
-	}
-	
+	if (lerp_iteration < 100) { 
+		
+		// Lerp to the start of spline over 25 frames
+				
+		for (int display = 0; display < 4; display++) // Get to start of spline in 25 seconds
+		{
+			lerp_iteration++;
+			lerp(start, end, 0.01*lerp_iteration);
+			converge(start, end, 0.01 * lerp_iteration, 1);
+		}
+
+	} else if (!drawingPath->controlPoints[cPointID + 1].empty)
+
+	{
 	/***************************************************************/
 	/* SECOND TRAVERSE SPLINE */
-	
+		
+		point_lerp++;
+		// START (at first control point)
+		if (startDrawingBob)
+		{
+			//converge to end
+			//converge(P_endEffector, end, 1, 3);
 
-	if (lerp_iteration >= 100 && !drawingPath->controlPoints[cPointID + 1].empty)
-	{
-		// Figure out what start and end should be this time... 
-
-		if (spline_lerp <= 10) {
-			spline_lerp++;
-			start << P_endEffector;
+			start << end; // start is beginning of spline
+			
 			end << drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.x,
 				drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.y,
 				drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.z,
 				1.0;
-			lerp(start, end, 0.1 * spline_lerp);
+			
+			
+			t += 0.01;
 
-		}
-		else {
-			spline_lerp = 0;
-			// Update t parameter to walk closer towards the next control point
-			t++;
-			// update control point id when t==1
-			if (t) {
-				cPointID++;
-				t = 0.001;
+			// LERP BETWEEN THE CURRENT POINTS
+			for (int display = 0; display < 4; display++)
+			{
+				lerp(start, end, 0.1 * point_lerp);
+				converge(start, end, 0.1 * point_lerp, 100);
 			}
-		}
+			startDrawingBob = false;
+			return 0;
+		} 
+						
+		if (point_lerp == 10)
 		
+		{
+			if (t)
 
+			{   // END (reaching a control point)
+				// Reset and update
+				start = end;
+				end << drawingPath->controlPoints[cPointID].point.x,
+					drawingPath->controlPoints[cPointID].point.y,
+					drawingPath->controlPoints[cPointID].point.z, 1.0;
+				cPointID++;
+				t = 0.01;
+			}
+
+			else {
+				// MIDDLE (between control points) -->ONLY UPDATE at point_lerp=10
+				start = end;
+				end << drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.x,
+					drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.y,
+					drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.z,
+					1.0;
+				
+			}
+			t += 0.01;
+			point_lerp = 0;
+
+			// LERP BETWEEN THE CURRENT POINTS
+			for (int display = 0; display < 4; display++)
+			{
+				lerp(start, end, 0.1 * point_lerp);
+				converge(start, end, 0.1 * point_lerp, 100);
+			}
+			return 0;
+		}
 		
 	}
+	else
+	{
 
-	/***************************************************************/
-
-	
-
-	
-
+		/***************************************************************/
+		/* REACHED END OF SPLINE SO RESET TO START OF SPLINE*/
 
 
+	}
 
 	return 0;
+}
+
+void BobDraws::converge(Eigen::Vector4d start, Eigen::Vector4d end, float scalar, int max)
+{
+	Eigen::Vector4d step;
+	/***************************************************************/
+	/* STEP 1: find p target by linearly interpolating between start and end by scalar*/
+	P_target = (1.0f - scalar) * start + end * scalar;
+	
+
+	/***************************************************************/
+	/* STEP 2: update nescessary variables*/
+
+	// 2) a. update P_EndEffector
+	EndEffectorWorldCoord transform(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
+	P_endEffector = transform.matrixTransform * Eigen::Vector4d{ 0.0, 0.0, 0.0, 1 };
+
+	// 2) b. update error based on where bob's hand actually ended up
+	Error = P_target - P_endEffector; // vec4
+
+	/***************************************************************/
+	/* STEP 3: converge to P_target*/
+	int max_iterations = 0;
+
+	while (Error.norm() > Epsilon && max_iterations < max)
+	{
+		// 3) a. Make a step along the error towards the actual target
+		step = Error * 0.2f;
+
+		// 3) b. Compute Jacobian based on current angles
+		Jacobian j(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
+
+		// 3) b. Find BETA based on step
+		BetaSolver beta(j, Eigen::Vector3d{ step[0], step[1], step[2] });
+
+		// 3) c. calculate dt Thetas based on Jt * beta
+		dtThetas << j.jacobian.transpose() * beta.beta;
+
+
+		// 3) d. update joint angles
+		updateAngles(dtThetas);
+
+		// 3) e. Recalculate actual end effector after the angles have been updated with the new jacobian. 
+		EndEffectorWorldCoord transform(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
+		P_endEffector << transform.matrixTransform * Eigen::Vector4d{ 0.0, 0.0, 0.0, 1 };
+
+		// 3) f. Recalculate error
+		Error << P_target - P_endEffector;
+
+		// 3) g. update max iterations to avoid inf loops
+		max_iterations++;
+
+	}
+
 }
 
 /* The following function is given two points in space and a scalar. 
@@ -78,7 +168,6 @@ int BobDraws::step(double time)
 void BobDraws::lerp(Eigen::Vector4d start, Eigen::Vector4d end, float scalar)
 {
 	Eigen::Vector4d step;
-
 
 	animTcl::OutputMessage("scalar is: %f", scalar);
 	glm::vec4 start_print = { start[0], start[1], start[2], start[3] };
@@ -115,70 +204,18 @@ void BobDraws::lerp(Eigen::Vector4d start, Eigen::Vector4d end, float scalar)
 	updateAngles(dtThetas);
 
 	/****************************************************************/
-	/* STEP 4: update nescessary variables for while loop*/
+	/* STEP 4: update nescessary variables*/
 
 	// 4) a. update P_EndEffector
 	EndEffectorWorldCoord transform(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
 	P_endEffector = transform.matrixTransform * Eigen::Vector4d{ 0.0, 0.0, 0.0, 1 };
-	// 4) 4. update error based on where bob's hand actually ended up
-	Error = P_target - P_endEffector; // vec4
 
-	//////////////////////////// TEST BEFORE MOVING ON //////////////////////
-	//animTcl::OutputMessage("");
-	//animTcl::OutputMessage("");
-	//animTcl::OutputMessage("BEFORE WHILE LOOP");
-	//print_vals_for_testing(step);
+	///////TEST///////////////////////////////////
+	animTcl::OutputMessage("");
+	animTcl::OutputMessage("END OF LERP");
+	print_vals_for_testing(step);
 
-	///////////////////////////////////////////////////////////////////////
-
-	/***************************************************************/
-	/* STEP 5: while loop */
-	
-	int max_iterations = 0;
-	
-	//while (Error.norm() > Epsilon && max_iterations < 5000)
-	//{
-	//	// 5) a. Make a step along the error towards the actual target
-	//	step = Error;
-
-	//	// 5) b. Compute Jacobian based on current angles
-	//	Jacobian j(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
-
-	//	// 5) b. Find BETA based on step
-	//	BetaSolver beta(j, Eigen::Vector3d{ step[0], step[1], step[2] });
-
-	//	// 5) c. calculate dt Thetas based on Jt * beta
-	//	dtThetas << j.jacobian.transpose() * beta.beta;
-	//	//////////////////////////// TEST BEFORE MOVING ON //////////////////////
-	//	//animTcl::OutputMessage("");
-	//	//animTcl::OutputMessage("");
-	//	//animTcl::OutputMessage("RIGHT AFTER COMPUTING DT THETAS IN WHILE LOOP");
-	//	//print_vals_for_testing(step);
-
-	//	///////////////////////////////////////////////////////////////////////
-
-	//	// 5) d. update joint angles
-	//	updateAngles(dtThetas);
-
-	//	// 5) e. Recalculate actual end effector after the angles have been updated with the new jacobian. 
-	//	EndEffectorWorldCoord transform(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
-	//	P_endEffector << transform.matrixTransform * Eigen::Vector4d{ 0.0, 0.0, 0.0, 1 };
-
-	//	// 5) f. Recalculate error
-	//	Error << P_target - P_endEffector;
-	//	
-	//	// 5) g. update max iterations to avoid inf loops
-	//	max_iterations++;
-
-	//	////////////////////////// TEST BEFORE MOVING ON //////////////////////
-	//	animTcl::OutputMessage("");
-	//	animTcl::OutputMessage("");
-	//	animTcl::OutputMessage("END OF WHILE LOOP");
-	//	print_vals_for_testing(step);
-
-	//	/////////////////////////////////////////////////////////////////////
-	//}
-
+	////////////////////////////////////
 }
 
 void BobDraws::print_vals_for_testing(Eigen::Vector4d step)
@@ -228,6 +265,8 @@ void BobDraws::initializePs() {
 	P_target << drawingPath->controlPoints[0].point.x, drawingPath->controlPoints[0].point.y, drawingPath->controlPoints[0].point.z, 1.0;
 	
 	start << P_endEffector;
+	end << drawingPath->controlPoints[0].point.x, drawingPath->controlPoints[0].point.y, drawingPath->controlPoints[0].point.z, 1.0;
+
 	///////////////////// VARS FOR TESTING /////////
 	m_bob->temp_end_eff = { P_endEffector[0], P_endEffector[1], P_endEffector[2] };
 	m_bob->target_point = glm::vec3{ P_target[0], P_target[1], P_target[2] };

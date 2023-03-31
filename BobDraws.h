@@ -28,6 +28,7 @@ public:
 	int command(int argc, myCONST_SPEC char** argv);
 	int init(double time) { return 0; };
 	void lerp(Eigen::Vector4d start, Eigen::Vector4d end, float scalar);
+	void converge(Eigen::Vector4d start, Eigen::Vector4d end, float scalar, int max);
 	void updateAngles(Eigen::VectorXd newThetas);
 	//FOR TESTING
 	void print_vals_for_testing(Eigen::Vector4d step);
@@ -37,8 +38,8 @@ private:
 	Bob* m_bob;
 	
 	void initializePs();
-	double t = 0.001;
-
+	double t = 0.01;
+	bool startDrawingBob = true;
 	/* VARIABLES FOR THE ENTIRE IKSIM*/
 	
 	// Storage for dtThetas
@@ -56,8 +57,9 @@ private:
 	Eigen::VectorXd start;
 	Eigen::VectorXd end;
 	int lerp_iteration = 0;
-	int spline_lerp = 0;
+	int point_lerp = 0;
 
+	bool startOfSpline = false;
 
 
 };
