@@ -1,14 +1,22 @@
 #include "BetaSolver.h"
 
-#include "BetaSolver.h"
+void printVectorBeta(Eigen::Vector3d beta)
+{
+	animTcl::OutputMessage("\nBeta by row: ");
+	for (int i = 0; i < 3; i++) {
+		animTcl::OutputMessage("%f \n", beta.row(i)[0]);
+	}
 
+	animTcl::OutputMessage("\n\n");
+}
 BetaSolver::BetaSolver(Jacobian& j, Eigen::Vector3d& dtX) 
 {
 	betaSolver(j, dtX);
+	printVectorBeta(beta);
 }
 
 // Solve for beta
-void BetaSolver::betaSolver(Jacobian& j, Eigen::Vector3d& dtX)
+void BetaSolver::betaSolver(Jacobian& j, Eigen::Vector3d dtX)
 {
 
 

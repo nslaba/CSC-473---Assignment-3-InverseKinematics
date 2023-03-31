@@ -27,6 +27,11 @@ public:
 	int step(double time);
 	int command(int argc, myCONST_SPEC char** argv);
 	int init(double time) { return 0; };
+	void lerp(Eigen::Vector4d start, Eigen::Vector4d end, float scalar);
+	void updateAngles(Eigen::VectorXd newThetas);
+	//FOR TESTING
+	void print_vals_for_testing(Eigen::Vector4d step);
+
 private:
 	HermiteSpline* drawingPath;
 	Bob* m_bob;
@@ -35,24 +40,24 @@ private:
 	double t = 0.001;
 
 	/* VARIABLES FOR THE ENTIRE IKSIM*/
+	
+	// Storage for dtThetas
 	Eigen::VectorXd dtThetas;
-	Eigen::VectorXd ErrorDtThetas;
+	// Control Point ID
 	int cPointID = 0;
-	glm::dvec3 dtX;
-	Eigen::Vector3d dtX_eigen;
-	// End effector in world coordinates AKA Pinitial
+	// End effector in world coordinates AKA Pinitial (where the arm actually is)
 	Eigen::VectorXd P_endEffector;
 	// P target in world coordinates
 	Eigen::VectorXd P_target;
-	// The actual end effector in reality
-	Eigen::Vector4d endEffector;
-	Eigen::Vector4d ErrorEndEffector;
-	// Error
-	double Error = 0.1;
-
-	/* VARIABLES NEEDED FOR GETTING TO THE START OF THE SPLINE */
-	float lerping_to_beginning_of_spline = 0.01;
-	// the intermediate lerping end point
+	// Epsilon
+	double Epsilon = 0.01;
+	// The difference between P-target and P_endEffector
+	Eigen::VectorXd Error;
+	Eigen::VectorXd start;
 	Eigen::VectorXd end;
+	int lerp_iteration = 0;
+	int spline_lerp = 0;
+
+
 
 };

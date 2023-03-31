@@ -15,7 +15,7 @@ EndEffectorWorldCoord::EndEffectorWorldCoord(rAngles angles, double L1, double L
 					* translateY(-L2) * zRoll(angles.theta6) * yRoll(angles.theta7)
 					* translateY(-L3);
 	
-	printMatrix(matrixTransform);
+	//printMatrix(matrixTransform);
 }
 
 Eigen::Matrix4d EndEffectorWorldCoord::translateZ(double translation)

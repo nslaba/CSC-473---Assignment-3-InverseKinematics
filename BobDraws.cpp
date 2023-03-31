@@ -3,7 +3,7 @@
 BobDraws::BobDraws(const std::string& name, HermiteSpline* drawing, Bob* bob) :
 	BaseSimulator(name),
 	drawingPath(drawing),
-	m_bob(bob), P_endEffector(4), P_target(4), dtX_eigen(3), endEffector(4), ErrorEndEffector(4), dtThetas(7), ErrorDtThetas(7), end(4)
+	m_bob(bob), P_endEffector(4), P_target(4), dtThetas(7), Error(4), start(4), end(4)
 {											 
 }	// BobDraws								  
 
@@ -13,174 +13,59 @@ BobDraws::~BobDraws()
 
 int BobDraws::step(double time)
 {
-	////////////TEST JACOBIAN //////////////////////
-	static double i = 0.1;
+	/***************************************************************/
+	/* FIRST GET TO SPLINE lerp function */
+	// for now only call lerp 10 times although I will have to call it the right amount of times to get to target eventually
 	
-
-	if (i < 0.2) {
-		//update variables
-		end << drawingPath->controlPoints[0].point.x, drawingPath->controlPoints[0].point.y, drawingPath->controlPoints[0].point.z, 1.0;
-		dtX_eigen << end[0] - P_endEffector[0], end[1] - P_endEffector[1], end[2] - P_endEffector[2];
-		dtX_eigen << dtX_eigen * i;
-		P_target << P_endEffector + Eigen::Vector4d{ dtX_eigen[0], dtX_eigen[0], dtX_eigen[0], 0.0 };
-
-		glm::vec4 end_print = { end[0], end[1], end[2], end[3] };
-		glm::vec4 P_target_print = { P_target[0], P_target[1], P_target[2], P_target[3] };
-		glm::vec4 P_endEffector_print = { P_endEffector[0], P_endEffector[1], P_endEffector[2], P_endEffector[3] };
-		glm::vec3 dtX_print = { dtX_eigen[0], dtX_eigen[1], dtX_eigen[2] };
-
-		animTcl::OutputMessage("end: %f, %f, %f", end_print.x, end_print.y, end_print.z);
-		animTcl::OutputMessage("P_target: %f, %f, %f", P_target_print.x, P_target_print.y, P_target_print.z);
-		animTcl::OutputMessage("P_endEffector: %f, %f, %f", P_endEffector_print.x, P_endEffector_print.y, P_endEffector_print.z);
-		animTcl::OutputMessage("dtX: %f, %f, %f", dtX_print.x, dtX_print.y, dtX_print.z);
-
-
-		// Update error dt thetas to zero
-		ErrorDtThetas *= 0.0;
-		ErrorEndEffector << endEffector;
-		// ACCOUNT FOR ERROR
-		while ((P_target  - ErrorEndEffector).norm() > Error) {
-			// Get rid of Error dt thetas and try again
-			m_bob->angles.theta1 = m_bob->angles.theta1 - ErrorDtThetas[0];
-			m_bob->angles.theta2 = m_bob->angles.theta2 - ErrorDtThetas[1];
-			m_bob->angles.theta3 = m_bob->angles.theta3 - ErrorDtThetas[2];
-			m_bob->angles.theta4 = m_bob->angles.theta4 - ErrorDtThetas[3];
-			m_bob->angles.theta5 = m_bob->angles.theta5 - ErrorDtThetas[4];
-			m_bob->angles.theta6 = m_bob->angles.theta6 - ErrorDtThetas[5];
-			m_bob->angles.theta7 = m_bob->angles.theta7 - ErrorDtThetas[6];
-			//make Error end effector go back
-			ErrorEndEffector << endEffector;
-			//P_target = P_endEffector + Eigen::Vector4d{ -0.03, 0.1, 0.08, 0.0 };
-			
-
-			Jacobian j(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
-
-			// Find BETA
-			BetaSolver beta(j, dtX_eigen);
-
-			// FIND PSEUDO INVERSE OF JACOBIAN BASED ON BETA
-			ErrorDtThetas = j.jacobian.transpose() * beta.beta;
-
-
-			// UPDATE THETAS
-			m_bob->angles.theta1 = m_bob->angles.theta1 + ErrorDtThetas[0];
-			m_bob->angles.theta2 = m_bob->angles.theta2 + ErrorDtThetas[1];
-			m_bob->angles.theta3 = m_bob->angles.theta3 + ErrorDtThetas[2];
-			m_bob->angles.theta4 = m_bob->angles.theta4 + ErrorDtThetas[3];
-			m_bob->angles.theta5 = m_bob->angles.theta5 + ErrorDtThetas[4];
-			m_bob->angles.theta6 = m_bob->angles.theta6 + ErrorDtThetas[5];
-			m_bob->angles.theta7 = m_bob->angles.theta7 + ErrorDtThetas[6];
-
-			EndEffectorWorldCoord transform(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
-
-			// update the real endEffector based on the calculated trouble shot angles
-			ErrorEndEffector = transform.matrixTransform * endEffector;
-
-			///////////////////// VARS FOR TESTING /////////
-			m_bob->temp_end_eff = { P_endEffector[0], P_endEffector[1], P_endEffector[2] };
-			m_bob->target_point = glm::vec3{ P_target[0], P_target[1], P_target[2] };
-
-			/////////////////////////////////////////////
-			break;
-		}
+	end << drawingPath->controlPoints[0].point.x, drawingPath->controlPoints[0].point.y, drawingPath->controlPoints[0].point.z, 1.0;
+	
+	if (lerp_iteration <= 100) {
+		lerp_iteration++;
+		// I should update P_endEffector, but I shouldn't update P_target it should always be end of spline
+		animTcl::OutputMessage("lerp iteration is: %d", lerp_iteration);
+		animTcl::OutputMessage("lerp scalar is: %f", lerp_iteration * 0.01);
+		lerp(start, end, 0.01*lerp_iteration);
 		
-		i+= 0.1;
 	}
 	
-	////////////////////////////////////////////////
-	///* FIRST OF ALL HANDLE GETTING TO THE SPLINE */
-	//if (lerping_to_beginning_of_spline < 1.0)
-	//{
-	//	m_bob->target_point = { intermediateEnd[0], intermediateEnd[1], intermediateEnd[2] };
+	/***************************************************************/
+	/* SECOND TRAVERSE SPLINE */
+	
 
-	//	animTcl::OutputMessage("intermediateEnd before scaling is as vec3 is: %f, %f, %f", m_bob->temp_end_eff.x, m_bob->temp_end_eff.y, m_bob->temp_end_eff.z);
+	if (lerp_iteration >= 100 && !drawingPath->controlPoints[cPointID + 1].empty)
+	{
+		// Figure out what start and end should be this time... 
 
-	//	// update intermediateEnd to be a scalar of P_target.
-	//	intermediateEnd << dtX_eigen[0] * lerping_to_beginning_of_spline, dtX_eigen[1] * lerping_to_beginning_of_spline, dtX_eigen[2] * lerping_to_beginning_of_spline, 0.0;
+		if (spline_lerp <= 10) {
+			spline_lerp++;
+			start << P_endEffector;
+			end << drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.x,
+				drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.y,
+				drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.z,
+				1.0;
+			lerp(start, end, 0.1 * spline_lerp);
 
-	//	//////////////////////////////// TESTING //////////////
-	//	m_bob->target_point = { intermediateEnd[0], intermediateEnd[1], intermediateEnd[2] };
-	//	
-	//	animTcl::OutputMessage("intermediateEnd after scaling as vec3 is: %f, %f, %f", m_bob->target_point.x, m_bob->target_point.y, m_bob->target_point.z);
-	//	animTcl::OutputMessage("lerping_to_beginning_of_spline: %f", lerping_to_beginning_of_spline);
+		}
+		else {
+			spline_lerp = 0;
+			// Update t parameter to walk closer towards the next control point
+			t++;
+			// update control point id when t==1
+			if (t) {
+				cPointID++;
+				t = 0.001;
+			}
+		}
+		
 
-	//	//////////////////////////////////////////////////////
-	//	// Temporarily make dtX an eigen vec4 instead.
-	//	dtX_eigen << P_target[0] - intermediateEnd[0], P_target[1] - intermediateEnd[1], P_target[2] - intermediateEnd[2];
+		
+	}
 
-	//	// Jacobian determines how the P_endEffector changes based on current angles and the hand point in hand coordinate system
-		//Jacobian j(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
+	/***************************************************************/
 
-		//// Find BETA
-		//BetaSolver beta(j, dtX_eigen);
+	
 
-		//// FIND PSEUDO INVERSE OF JACOBIAN BASED ON BETA
-		//dtThetas = j.jacobian.transpose() * beta.beta;
-
-
-		//// UPDATE THETAS
-		//m_bob->angles.theta1 = m_bob->angles.theta1 + dtThetas[0];
-		//m_bob->angles.theta2 = m_bob->angles.theta2 + dtThetas[1];
-		//m_bob->angles.theta3 = m_bob->angles.theta3 + dtThetas[2];
-		//m_bob->angles.theta4 = m_bob->angles.theta4 + dtThetas[3];
-		//m_bob->angles.theta5 = m_bob->angles.theta5 + dtThetas[4];
-		//m_bob->angles.theta6 = m_bob->angles.theta6 + dtThetas[5];
-		//m_bob->angles.theta7 = m_bob->angles.theta7 + dtThetas[6];
-
-	//	// Update LERP scaler
-	//	lerping_to_beginning_of_spline += 0.01;
-	//}
-
-	///* SECOND OF ALL HANDLE TRAVERSING THE SPLINE */
-	//if (lerping_to_beginning_of_spline== 1.0 && !drawingPath->controlPoints[cPointID + 1].empty)
-	//{
-	//	// Update P_endEffector to be start of spline only once then moving along spline
-	//	if (!lerping_to_beginning_of_spline)
-	//	{
-	//		P_endEffector << drawingPath->controlPoints[cPointID].point.x, drawingPath->controlPoints[cPointID].point.y, drawingPath->controlPoints[cPointID].point.z, 1.0;
-	//	}
-
-	//	// Update P_target to be next point on spline
-	//	P_target << drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.x, 
-	//		drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.y, 
-	//		drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.z, 
-	//		1.0;
-
-	//	// Make dtX an eigen vec4 instead.
-	//	dtX_eigen << P_target - P_endEffector;
-
-
-	//	// Jacobian determines how the P_endEffector changes based on current angles and the hand point in hand coordinate system
-	//	Jacobian j(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
-
-
-	//	// Find BETA
-	//	BetaSolver beta(j, dtX_eigen);
-
-	//	// FIND PSEUDO INVERSE OF JACOBIAN BASED ON BETA
-	//	dtThetas = j.jacobian.transpose() * beta.beta;
-
-
-	//	// UPDATE THETAS
-	//	m_bob->angles.theta1 = m_bob->angles.theta1 + dtThetas[0];
-	//	m_bob->angles.theta2 = m_bob->angles.theta2 + dtThetas[1];
-	//	m_bob->angles.theta3 = m_bob->angles.theta3 + dtThetas[2];
-	//	m_bob->angles.theta4 = m_bob->angles.theta4 + dtThetas[3];
-	//	m_bob->angles.theta5 = m_bob->angles.theta5 + dtThetas[4];
-	//	m_bob->angles.theta6 = m_bob->angles.theta6 + dtThetas[5];
-	//	m_bob->angles.theta7 = m_bob->angles.theta7 + dtThetas[6];
-
-	//	// update P_endEffector
-	//	P_endEffector = P_target;
-
-	//	// Update t parameter to walk closer towards the next control point
-	//	t++;
-	//	// update control point id when t==1
-	//	if (t) {
-	//		cPointID++;
-	//		t = 0.00001;
-	//	}
-	//}
+	
 
 
 
@@ -188,7 +73,143 @@ int BobDraws::step(double time)
 	return 0;
 }
 
+/* The following function is given two points in space and a scalar. 
+   It's purpose is to move the arm between those points in space by a certain scalar*/
+void BobDraws::lerp(Eigen::Vector4d start, Eigen::Vector4d end, float scalar)
+{
+	Eigen::Vector4d step;
 
+
+	animTcl::OutputMessage("scalar is: %f", scalar);
+	glm::vec4 start_print = { start[0], start[1], start[2], start[3] };
+	glm::vec4 end_print = { end[0], end[1], end[2], end[3] };
+	animTcl::OutputMessage("current start is: %f %f %f", start_print.x, start_print.y, start_print.z, start_print.w);
+	animTcl::OutputMessage("current end vector is: %f %f %f %f", end_print.x, end_print.y, end_print.z, end_print.w);
+
+
+	/***************************************************************/
+	/* STEP 1: find p target by linearly interpolating between start and end by scalar*/
+	P_target = (1.0f - scalar) * start + end * scalar; 
+	
+
+	/***************************************************************/
+	/* STEP 2: Update the nescessary variables */
+
+	// 2) a. find the step that would get me to P_target
+	step = P_target - P_endEffector; // gives vec4
+
+
+	/***************************************************************/
+	/* STEP 3: Make an actual step */
+
+	// 3) a. Compute Jacobian based on current angles
+	Jacobian j(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
+
+	// 3) b. Find BETA based on step
+	BetaSolver beta(j, Eigen::Vector3d{ step[0], step[1], step[2] });
+
+	// 3) c. calculate dt Thetas based on Jt * beta
+	dtThetas = j.jacobian.transpose() * beta.beta;
+
+	// 3) d. update joint angles
+	updateAngles(dtThetas);
+
+	/****************************************************************/
+	/* STEP 4: update nescessary variables for while loop*/
+
+	// 4) a. update P_EndEffector
+	EndEffectorWorldCoord transform(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
+	P_endEffector = transform.matrixTransform * Eigen::Vector4d{ 0.0, 0.0, 0.0, 1 };
+	// 4) 4. update error based on where bob's hand actually ended up
+	Error = P_target - P_endEffector; // vec4
+
+	//////////////////////////// TEST BEFORE MOVING ON //////////////////////
+	//animTcl::OutputMessage("");
+	//animTcl::OutputMessage("");
+	//animTcl::OutputMessage("BEFORE WHILE LOOP");
+	//print_vals_for_testing(step);
+
+	///////////////////////////////////////////////////////////////////////
+
+	/***************************************************************/
+	/* STEP 5: while loop */
+	
+	int max_iterations = 0;
+	
+	//while (Error.norm() > Epsilon && max_iterations < 5000)
+	//{
+	//	// 5) a. Make a step along the error towards the actual target
+	//	step = Error;
+
+	//	// 5) b. Compute Jacobian based on current angles
+	//	Jacobian j(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
+
+	//	// 5) b. Find BETA based on step
+	//	BetaSolver beta(j, Eigen::Vector3d{ step[0], step[1], step[2] });
+
+	//	// 5) c. calculate dt Thetas based on Jt * beta
+	//	dtThetas << j.jacobian.transpose() * beta.beta;
+	//	//////////////////////////// TEST BEFORE MOVING ON //////////////////////
+	//	//animTcl::OutputMessage("");
+	//	//animTcl::OutputMessage("");
+	//	//animTcl::OutputMessage("RIGHT AFTER COMPUTING DT THETAS IN WHILE LOOP");
+	//	//print_vals_for_testing(step);
+
+	//	///////////////////////////////////////////////////////////////////////
+
+	//	// 5) d. update joint angles
+	//	updateAngles(dtThetas);
+
+	//	// 5) e. Recalculate actual end effector after the angles have been updated with the new jacobian. 
+	//	EndEffectorWorldCoord transform(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
+	//	P_endEffector << transform.matrixTransform * Eigen::Vector4d{ 0.0, 0.0, 0.0, 1 };
+
+	//	// 5) f. Recalculate error
+	//	Error << P_target - P_endEffector;
+	//	
+	//	// 5) g. update max iterations to avoid inf loops
+	//	max_iterations++;
+
+	//	////////////////////////// TEST BEFORE MOVING ON //////////////////////
+	//	animTcl::OutputMessage("");
+	//	animTcl::OutputMessage("");
+	//	animTcl::OutputMessage("END OF WHILE LOOP");
+	//	print_vals_for_testing(step);
+
+	//	/////////////////////////////////////////////////////////////////////
+	//}
+
+}
+
+void BobDraws::print_vals_for_testing(Eigen::Vector4d step)
+{
+	glm::vec3 step_print = { step[0], step[1], step[2] };
+	glm::vec3 p_target_print = { P_target[0], P_target[1], P_target[2] };
+	glm::vec3 p_end_effector_print = { P_endEffector[0], P_endEffector[1], P_endEffector[2] };
+	glm::vec4 error_print = { Error[0], Error[1], Error[2], Error[3] };
+	
+	animTcl::OutputMessage("print delta Thetas: %f %f %f %f %f %f %f", dtThetas[0], dtThetas[1], dtThetas[2], dtThetas[3], dtThetas[4], dtThetas[5], dtThetas[6]);
+	animTcl::OutputMessage("print angles: %f %f %f %f %f %f %f", m_bob->angles.theta1, m_bob->angles.theta2, m_bob->angles.theta3, m_bob->angles.theta4, m_bob->angles.theta5, m_bob->angles.theta6, m_bob->angles.theta7);
+	animTcl::OutputMessage("current step is: %f %f %f", step_print.x, step_print.y, step_print.z);
+	animTcl::OutputMessage("current P_target is: %f %f %f", p_target_print.x, p_target_print.y, p_target_print.z);
+	animTcl::OutputMessage("current P_endEffector is: %f %f %f", p_end_effector_print.x, p_end_effector_print.y, p_end_effector_print.z);
+	animTcl::OutputMessage("current error vector is: %f %f %f %f", error_print.x, error_print.y, error_print.z, error_print.w);
+	animTcl::OutputMessage("current error size is: %f\n\n", Error.norm());
+	animTcl::OutputMessage("");
+	animTcl::OutputMessage("");
+}
+
+void BobDraws::updateAngles(Eigen::VectorXd newThetas)
+{
+	// UPDATE THETAS
+	m_bob->angles.theta1 = m_bob->angles.theta1 + newThetas[0];
+	m_bob->angles.theta2 = m_bob->angles.theta2 + newThetas[1];
+	m_bob->angles.theta3 = m_bob->angles.theta3 + newThetas[2];
+	m_bob->angles.theta4 = m_bob->angles.theta4 + newThetas[3];
+	m_bob->angles.theta5 = m_bob->angles.theta5 + newThetas[4];
+	m_bob->angles.theta6 = m_bob->angles.theta6 + newThetas[5];
+	m_bob->angles.theta7 = m_bob->angles.theta7 + newThetas[6];
+}
 
 void BobDraws::initializePs() {
 
@@ -202,10 +223,11 @@ void BobDraws::initializePs() {
 
 	// now end Effector represents Pinitial in world coordinates. In the beginning P_endEffector == endEffector
 	P_endEffector = transform.matrixTransform * P_endEffector;
-	endEffector << P_endEffector;
+	
 	// P_target is also in world coordinates representing the beginning of the spline
 	P_target << drawingPath->controlPoints[0].point.x, drawingPath->controlPoints[0].point.y, drawingPath->controlPoints[0].point.z, 1.0;
 	
+	start << P_endEffector;
 	///////////////////// VARS FOR TESTING /////////
 	m_bob->temp_end_eff = { P_endEffector[0], P_endEffector[1], P_endEffector[2] };
 	m_bob->target_point = glm::vec3{ P_target[0], P_target[1], P_target[2] };

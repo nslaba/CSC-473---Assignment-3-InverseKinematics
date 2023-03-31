@@ -22,7 +22,7 @@ public:
 	Eigen::Vector3d beta;
 
 	// Solve for beta
-	void betaSolver(Jacobian& j, Eigen::Vector3d& dtX);
+	void betaSolver(Jacobian& j, Eigen::Vector3d dtX);
 
 protected:
 	
