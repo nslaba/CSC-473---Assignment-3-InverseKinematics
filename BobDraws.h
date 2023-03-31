@@ -30,6 +30,7 @@ public:
 	void lerp(Eigen::Vector4d start, Eigen::Vector4d end, float scalar);
 	void converge(Eigen::Vector4d start, Eigen::Vector4d end, float scalar, int max);
 	void updateAngles(Eigen::VectorXd newThetas);
+	void updateTargetPoints();
 	//FOR TESTING
 	void print_vals_for_testing(Eigen::Vector4d step);
 
@@ -38,7 +39,7 @@ private:
 	Bob* m_bob;
 	
 	void initializePs();
-	double t = 0.01;
+	double t = 0.001;
 	bool startDrawingBob = true;
 	/* VARIABLES FOR THE ENTIRE IKSIM*/
 	

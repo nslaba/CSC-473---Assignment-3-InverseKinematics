@@ -38,7 +38,6 @@ public:
 	float z = 3.0;
 
 	//initial position angles
-	//rAngles angles = rAngles{ 0.0, 0.0, 90.0, 0.0, 0.0, 0.0, 0.0 };
 	rAngles angles;
 	
 
