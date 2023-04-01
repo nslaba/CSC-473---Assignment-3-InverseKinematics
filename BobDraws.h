@@ -66,10 +66,10 @@ private:
 
 	bool startOfSpline = false;
 
-	float max_animation_time = 2.5;// max animation time is 2.5 seconds
-	float max_lerp_time = 0.5; // max time it takes to get to start of spline from resting position
+	double max_animation_time = 2.5;// max animation time is 2.5 seconds
+	double max_lerp_time = 0.5; // max time it takes to get to start of spline from resting position
 	Eigen::Vector4d resting_position; // save the initial resting position found by P_endEffector
 	double dt = 0.0;
 	double prevTime = 0.0;
-
+	double lerp_time = 0.0;
 };

@@ -13,42 +13,39 @@ BobDraws::~BobDraws()
 
 int BobDraws::step(double time)
 {
-	
+	// TESTING VAR
+	m_bob->target_point = glm::vec3{ P_target[0], P_target[1], P_target[2] };
+
 	//METHOD BY SEPERATION ANIMATION AND CALCULATIONS
 	
 	dt += (time - prevTime);
 	
-	if (dt >= -0.000001 && dt <= (max_lerp_time + 0.0001))
+	if (dt >= -0.000001 && dt <= (max_lerp_time + 0.00001))
 	{ // LERP to start of spline
 		lerp(start, end, dt / max_lerp_time);
 		converge(dt / max_lerp_time, 10);
+		lerp_time = dt;
 	}
-	else if (dt > max_lerp_time && dt <= max_animation_time)
+	else if (dt > (max_lerp_time + 0.00001) && dt <= (max_animation_time + max_lerp_time))
 	{ // move to the right spot on spline in one frame based on the fraction of max_anim_time
-		updateP_target(dt - max_lerp_time);
+		updateP_target(dt - (lerp_time));
 		moveToPointInOneFrame();
 	}
-	else if (dt > max_animation_time)
+	else if (dt > (max_animation_time + max_lerp_time))
 	{ // move to the start of spline and reset dt
 		initializePs();
 		dt = 0.0;
+	}
+	else if (dt < -0.00001) {
+		// simulation time has been reset
+		dt = prevTime;
 	}
 	
 	
 	prevTime = time;
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	///***************************************************************/
 	///* FIRST GET TO SPLINE lerp function */
 	//	
@@ -282,6 +279,13 @@ void BobDraws::moveToPointInOneFrame() {
 	EndEffectorWorldCoord t(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
 	P_endEffector = t.matrixTransform * Eigen::Vector4d{ 0.0, 0.0, 0.0, 1 };
 	
+	///////TEST///////////////////////////////////
+	animTcl::OutputMessage("");
+	animTcl::OutputMessage("IN MOVE TO POINT IN ONE FRAME");
+	print_vals_for_testing(step);
+
+	////////////////////////////////////
+
 	for (int scalar = 0; scalar < 10; scalar++)
 	{
 		converge(0.1 * scalar, 100);
@@ -298,9 +302,9 @@ void BobDraws::updateP_target(float param)
 	float fullLength = drawingPath->getFullLength();
 	float distanceTravelled = (param / max_animation_time) * fullLength;
 	animTcl::OutputMessage("distanceTravelled is: %f", distanceTravelled);
-	
-	//MY DISTANCE TRAVELLED IS WRONG
-	//////////////////////////////////////////////////////////
+	animTcl::OutputMessage("full length is %f: ", fullLength);
+	animTcl::OutputMessage("input param is %f: ", param);
+	animTcl::OutputMessage("param/max_anim is %f", param / max_animation_time);
 
 	/* STEP 2: Calculate position based on P(u(s(t)))*/
 	LookUpTableEntry tempEntry = LookUpTableEntry();

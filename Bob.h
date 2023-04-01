@@ -35,7 +35,7 @@ public:
 	float L1 = 2.0;
 	float L2 = 2.0;
 	float L3 = 0.5;
-	float z = 3.0;
+	float z = 2.7;
 
 	//initial position angles
 	rAngles angles;
