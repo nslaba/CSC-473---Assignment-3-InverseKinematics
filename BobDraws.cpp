@@ -13,61 +13,100 @@ BobDraws::~BobDraws()
 
 int BobDraws::step(double time)
 {
-	/***************************************************************/
-	/* FIRST GET TO SPLINE lerp function */
-		
-	if (lerp_iteration < 100) { 
-		
-		// Lerp to the start of spline over 25 frames
-				
-		for (int display = 0; display < 4; display++) // Get to start of spline in 25 seconds
-		{
-			lerp_iteration++;
-			lerp(start, end, 0.01*lerp_iteration);
-			converge(start, end, 0.01 * lerp_iteration, 4);
-		}
-
-	} else if (!drawingPath->controlPoints[cPointID + 1].empty) {
-	/***************************************************************/
-	/* SECOND TRAVERSE SPLINE */
-
-		// Update point lerp
-		point_lerp++;
 	
-		// Update end based on state
-		if (point_lerp ==10 || startDrawingBob) updateTargetPoints();	
-
-		for (int display = 0; display < 4; display++)
-		{
-			lerp(start, end, 0.1 * point_lerp);
-			converge(start, end, 0.1 * point_lerp, 100);
-		}	
+	//METHOD BY SEPERATION ANIMATION AND CALCULATIONS
+	
+	dt += (time - prevTime);
+	
+	if (dt >= -0.000001 && dt <= (max_lerp_time + 0.0001))
+	{ // LERP to start of spline
+		lerp(start, end, dt / max_lerp_time);
+		converge(dt / max_lerp_time, 10);
 	}
-	else
-	{
-	/***************************************************************/
-		/* REACHED END OF SPLINE SO RESET TO START OF SPLINE*/
-
-		// reset control point ID
-		cPointID = 0;
-
-		// update point_lerp
-		point_lerp = 0;
-
-		// update bool
-		startDrawingBob = true;
-		
-		// reinitialize P's
+	else if (dt > max_lerp_time && dt <= max_animation_time)
+	{ // move to the right spot on spline in one frame based on the fraction of max_anim_time
+		updateP_target(dt - max_lerp_time);
+		moveToPointInOneFrame();
+	}
+	else if (dt > max_animation_time)
+	{ // move to the start of spline and reset dt
 		initializePs();
-		
-		// Place at the beginning of spline
-		for (int display = 0; display < 100; display++) 
-		{			
-			lerp(start, end, 0.01 * display);
-			converge(start, end, 0.01 * display, 4);
-		}
-		
+		dt = 0.0;
 	}
+	
+	
+	prevTime = time;
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	///***************************************************************/
+	///* FIRST GET TO SPLINE lerp function */
+	//	
+	//if (lerp_iteration <= 100) { 
+	//	
+	//	// Lerp to the start of spline over 25 frames
+	//			
+	//	for (int display = 0; display < 4; display++) // Get to start of spline in 25 seconds
+	//	{
+	//		lerp_iteration++;
+	//		lerp(start, end, 0.01*lerp_iteration);
+	//		converge(start, end, 0.01 * lerp_iteration, 2);
+	//	}
+
+	//} else if (!drawingPath->controlPoints[cPointID + 1].empty) {
+	///***************************************************************/
+	///* SECOND TRAVERSE SPLINE */
+
+	//	
+
+	//	for (int display = 0; display < 10; display++)
+	//	{
+	//		// Update point lerp
+	//		point_lerp++;
+
+	//		// Update end based on state
+	//		if (point_lerp == 10 || startDrawingBob) updateTargetPoints();
+	//		lerp(start, end, 0.1 * point_lerp);
+	//		
+	//		//converge(start, end, 0.1 * point_lerp, 10);
+	//	}	
+	//}
+	//else
+	//{
+	///***************************************************************/
+	//	/* REACHED END OF SPLINE SO RESET TO START OF SPLINE*/
+
+	//	// reset control point ID
+	//	cPointID = 0;
+
+	//	// update point_lerp
+	//	point_lerp = 0;
+
+	//	// update bool
+	//	startDrawingBob = true;
+	//	
+	//	// reinitialize P's
+	//	initializePs();
+	//	
+	//	// Place at the beginning of spline
+	//	for (int display = 0; display < 100; display++) 
+	//	{			
+	//		lerp(start, end, 0.01 * display);
+	//
+	//		//converge(start, end, 0.01 * display, 4);
+	//	}
+	//	
+	//}
 
 	return 0;
 }
@@ -79,11 +118,11 @@ void BobDraws::updateTargetPoints()
 	start = end;
 
 	// Update end based on t
-	if (t) { 
+	if (t >= 0.9999 && t <= 1.0001) { 
 
 		// Reached a control point: Update and Reset	
 		cPointID++;
-
+		t = 0.0;
 		end << drawingPath->controlPoints[cPointID].point.x,
 			drawingPath->controlPoints[cPointID].point.y,
 			drawingPath->controlPoints[cPointID].point.z, 1.0;
@@ -96,22 +135,19 @@ void BobDraws::updateTargetPoints()
 			drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.y,
 			drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.z,
 			1.0;		
+		startDrawingBob = false;
 	}
 
-	// Update t
-	t += 0.001;
+	t += 0.01;
+	
 	// Reset point_lerp to lerp between the next two points
 	point_lerp = 0;
 }
 
-void BobDraws::converge(Eigen::Vector4d start, Eigen::Vector4d end, float scalar, int max)
+void BobDraws::converge(float scalar, int max)
 {
 	Eigen::Vector4d step;
-	/***************************************************************/
-	/* STEP 1: find p target by linearly interpolating between start and end by scalar*/
-	P_target = (1.0f - scalar) * start + end * scalar;
 	
-
 	/***************************************************************/
 	/* STEP 2: update nescessary variables*/
 
@@ -164,7 +200,7 @@ void BobDraws::lerp(Eigen::Vector4d start, Eigen::Vector4d end, float scalar)
 {
 	Eigen::Vector4d step;
 
-	animTcl::OutputMessage("scalar is: %f", scalar);
+	//animTcl::OutputMessage("scalar is: %f", scalar);
 	glm::vec4 start_print = { start[0], start[1], start[2], start[3] };
 	glm::vec4 end_print = { end[0], end[1], end[2], end[3] };
 	animTcl::OutputMessage("current start is: %f %f %f", start_print.x, start_print.y, start_print.z, start_print.w);
@@ -213,6 +249,74 @@ void BobDraws::lerp(Eigen::Vector4d start, Eigen::Vector4d end, float scalar)
 	////////////////////////////////////
 }
 
+// Given a certain point update end effector to move there
+void BobDraws::moveToPointInOneFrame() { 
+
+	/* STEP 1: update P_endEffector*/
+	EndEffectorWorldCoord transform(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
+	P_endEffector = transform.matrixTransform * Eigen::Vector4d{ 0.0, 0.0, 0.0, 1 };
+	
+	/* STEP2: update step*/
+	Eigen::Vector4d step;
+	step = P_target - P_endEffector; // gives vec4
+
+	/***************************************************************/
+
+	/* STEP 3: Make an actual step */
+
+	// 3) a. Compute Jacobian based on current angles
+	Jacobian j(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
+
+	// 3) b. Find BETA based on step
+	BetaSolver beta(j, Eigen::Vector3d{ step[0], step[1], step[2] });
+
+	// 3) c. calculate dt Thetas based on Jt * beta
+	dtThetas = j.jacobian.transpose() * beta.beta;
+
+	// 3) d. update joint angles
+	updateAngles(dtThetas);
+
+	/****************************************************************/
+
+	/*STEP 4: recalculate endEffector*/
+	EndEffectorWorldCoord t(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
+	P_endEffector = t.matrixTransform * Eigen::Vector4d{ 0.0, 0.0, 0.0, 1 };
+	
+	for (int scalar = 0; scalar < 10; scalar++)
+	{
+		converge(0.1 * scalar, 100);
+	}
+	
+}
+
+// The following function updates what p_target should be based on what fraction of max_time we're at and therefore what 
+// precentage of spline we are at.
+void BobDraws::updateP_target(float param)
+{
+	
+	/* STEP 1: convert input parameter to t (percantage of spline length)*/
+	float fullLength = drawingPath->getFullLength();
+	float distanceTravelled = (param / max_animation_time) * fullLength;
+	animTcl::OutputMessage("distanceTravelled is: %f", distanceTravelled);
+	
+	//MY DISTANCE TRAVELLED IS WRONG
+	//////////////////////////////////////////////////////////
+
+	/* STEP 2: Calculate position based on P(u(s(t)))*/
+	LookUpTableEntry tempEntry = LookUpTableEntry();
+	tempEntry.arcLength = distanceTravelled;
+	double u = drawingPath->getU(tempEntry);
+
+	/* STEP 2. c) get P_target based on U*/
+	// create a temp point
+	ControlPoint point = ControlPoint();
+	point = drawingPath->getPointAtU(u);
+
+	// Populate return point
+	P_target << point.point.x, point.point.y, point.point.z, 1;
+
+}
+
 void BobDraws::print_vals_for_testing(Eigen::Vector4d step)
 {
 	glm::vec3 step_print = { step[0], step[1], step[2] };
@@ -259,8 +363,14 @@ void BobDraws::initializePs() {
 	// P_target is also in world coordinates representing the beginning of the spline
 	P_target << drawingPath->controlPoints[0].point.x, drawingPath->controlPoints[0].point.y, drawingPath->controlPoints[0].point.z, 1.0;
 	
-	start << P_endEffector;
+
+	// SET START AND END TO BE START AND END OF SPLINE
+	start = P_endEffector;
 	end << drawingPath->controlPoints[0].point.x, drawingPath->controlPoints[0].point.y, drawingPath->controlPoints[0].point.z, 1.0;
+	//end << drawingPath->controlPoints[drawingPath->numKnots-1].point.x, drawingPath->controlPoints[drawingPath->numKnots - 1].point.y, drawingPath->controlPoints[drawingPath->numKnots - 1].point.z, 1.0;
+
+	// save resting position
+	resting_position = P_endEffector;
 
 	///////////////////// VARS FOR TESTING /////////
 	m_bob->temp_end_eff = { P_endEffector[0], P_endEffector[1], P_endEffector[2] };
@@ -275,7 +385,7 @@ int BobDraws::command(int argc, myCONST_SPEC char** argv)
 {
 	if (argc < 1)
 	{
-		animTcl::OutputMessage("system: wrong number of params.");
+		//animTcl::OutputMessage("system: wrong number of params.");
 		return TCL_ERROR;
 	}
 	else if (strcmp(argv[0], "read") == 0)
@@ -289,7 +399,7 @@ int BobDraws::command(int argc, myCONST_SPEC char** argv)
 		}
 		else {
 			// Wrong number of arguments
-			animTcl::OutputMessage("Wrong number of arguments");
+			//animTcl::OutputMessage("Wrong number of arguments");
 			return TCL_ERROR;
 		}
 	}

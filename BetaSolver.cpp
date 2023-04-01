@@ -12,7 +12,7 @@ void printVectorBeta(Eigen::Vector3d beta)
 BetaSolver::BetaSolver(Jacobian& j, Eigen::Vector3d& dtX) 
 {
 	betaSolver(j, dtX);
-	printVectorBeta(beta);
+	//printVectorBeta(beta);
 }
 
 // Solve for beta

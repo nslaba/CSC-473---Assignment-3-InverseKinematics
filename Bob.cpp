@@ -67,7 +67,7 @@ void Bob::drawBob() {
 	// Draw Torso			
 	glPushMatrix(); 
 	glScaled(torsoWidth, torsoHeight, 1);
-	animTcl::OutputMessage("torsoHeight is: %f", torsoHeight);
+	//animTcl::OutputMessage("torsoHeight is: %f", torsoHeight);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);
 	GLdrawCircle(0.5, 500);
