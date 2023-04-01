@@ -23,7 +23,7 @@ int BobDraws::step(double time)
 	if (dt >= -0.000001 && dt <= (max_lerp_time + 0.00001))
 	{ // LERP to start of spline
 		lerp(start, end, dt / max_lerp_time);
-		converge(dt / max_lerp_time, 10);
+		converge(10);
 		lerp_time = dt;
 	}
 	else if (dt > (max_lerp_time + 0.00001) && dt <= (max_animation_time + max_lerp_time))
@@ -44,104 +44,12 @@ int BobDraws::step(double time)
 	
 	prevTime = time;
 	
-	
-
-	///***************************************************************/
-	///* FIRST GET TO SPLINE lerp function */
-	//	
-	//if (lerp_iteration <= 100) { 
-	//	
-	//	// Lerp to the start of spline over 25 frames
-	//			
-	//	for (int display = 0; display < 4; display++) // Get to start of spline in 25 seconds
-	//	{
-	//		lerp_iteration++;
-	//		lerp(start, end, 0.01*lerp_iteration);
-	//		converge(start, end, 0.01 * lerp_iteration, 2);
-	//	}
-
-	//} else if (!drawingPath->controlPoints[cPointID + 1].empty) {
-	///***************************************************************/
-	///* SECOND TRAVERSE SPLINE */
-
-	//	
-
-	//	for (int display = 0; display < 10; display++)
-	//	{
-	//		// Update point lerp
-	//		point_lerp++;
-
-	//		// Update end based on state
-	//		if (point_lerp == 10 || startDrawingBob) updateTargetPoints();
-	//		lerp(start, end, 0.1 * point_lerp);
-	//		
-	//		//converge(start, end, 0.1 * point_lerp, 10);
-	//	}	
-	//}
-	//else
-	//{
-	///***************************************************************/
-	//	/* REACHED END OF SPLINE SO RESET TO START OF SPLINE*/
-
-	//	// reset control point ID
-	//	cPointID = 0;
-
-	//	// update point_lerp
-	//	point_lerp = 0;
-
-	//	// update bool
-	//	startDrawingBob = true;
-	//	
-	//	// reinitialize P's
-	//	initializePs();
-	//	
-	//	// Place at the beginning of spline
-	//	for (int display = 0; display < 100; display++) 
-	//	{			
-	//		lerp(start, end, 0.01 * display);
-	//
-	//		//converge(start, end, 0.01 * display, 4);
-	//	}
-	//	
-	//}
 
 	return 0;
 }
 
-/* The following helper function updates the end target based on the current state*/
-void BobDraws::updateTargetPoints()
-{
-	// Update start
-	start = end;
 
-	// Update end based on t
-	if (t >= 0.9999 && t <= 1.0001) { 
-
-		// Reached a control point: Update and Reset	
-		cPointID++;
-		t = 0.0;
-		end << drawingPath->controlPoints[cPointID].point.x,
-			drawingPath->controlPoints[cPointID].point.y,
-			drawingPath->controlPoints[cPointID].point.z, 1.0;
-		
-		
-	} else {
-
-		// MIDDLE 	
-		end << drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.x,
-			drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.y,
-			drawingPath->getNext(drawingPath->controlPoints[cPointID], drawingPath->controlPoints[cPointID + 1], t).point.z,
-			1.0;		
-		startDrawingBob = false;
-	}
-
-	t += 0.01;
-	
-	// Reset point_lerp to lerp between the next two points
-	point_lerp = 0;
-}
-
-void BobDraws::converge(float scalar, int max)
+void BobDraws::converge(int max)
 {
 	Eigen::Vector4d step;
 	
@@ -286,10 +194,9 @@ void BobDraws::moveToPointInOneFrame() {
 
 	////////////////////////////////////
 
-	for (int scalar = 0; scalar < 10; scalar++)
-	{
-		converge(0.1 * scalar, 100);
-	}
+	
+	converge(100);
+	
 	
 }
 

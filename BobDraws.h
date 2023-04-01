@@ -28,7 +28,7 @@ public:
 	int command(int argc, myCONST_SPEC char** argv);
 	int init(double time) { return 0; };
 	void lerp(Eigen::Vector4d start, Eigen::Vector4d end, float scalar);
-	void converge(float scalar, int max);
+	void converge(int max);
 	void updateAngles(Eigen::VectorXd newThetas);
 	void updateTargetPoints();
 	//FOR TESTING
