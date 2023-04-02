@@ -83,43 +83,7 @@ void Bob::drawBob() {
 	glPopMatrix();
 
 	// ARM LEFT
-	////////////////////////// ORIGINAL CODE /////////////////////////////////////
-	//// left upper
-	//glPushMatrix();
-	////glTranslated(0.0, -torsoHeight/2.0, 0.0);
-	//
-	//glTranslated(-(torsoWidth + L1) / 2.0, torsoHeight / 2.0, 0.0);
-	////glTranslated(-(torsoWidth + L1) / 2.0, 0.0, 0.0);
-	//// For now Rotate 90
-	//if (restPosition) glRotated(-90, 0, 0, 1);
-	//
-	//
-	////right lower
-	//glPushMatrix();
-	//glTranslated(0, -(L1 + L2) / 2.0, 0);
-	////glRotated(15, 0, 0, 1);
-
-	//// Draw Hand
-	//glPushMatrix();
-	//glTranslated(0, -(L2 + L3) / 2.0, 0);
-	//glScaled(limbWidth, L3, 1);
-	//glEnable(GL_COLOR_MATERIAL);
-	//glColor3f(0.0, 1.0, 0.0);
-	//GLdrawCircle(0.5, 500);
-	//glPopMatrix();
-
-	//glScaled(limbWidth, L2, 1);
-	//glEnable(GL_COLOR_MATERIAL);
-	//glColor3f(0.0, 1.0, 0.0);
-	//GLdrawCircle(0.5, 500);
-	//glPopMatrix();
-
-	//glScaled(limbWidth, L1, 1);
-	//glEnable(GL_COLOR_MATERIAL);
-	//glColor3f(0.0, 1.0, 0.0);
-	//GLdrawCircle(0.5, 500);
-	//glPopMatrix();
-	///////////////////////////// TEST ////////////////////////////////////////
+	
 
 	glPushMatrix();
 	glTranslated(-(torsoWidth) / 2.0, torsoHeight / 2.0, 0.0);
@@ -175,12 +139,6 @@ void Bob::drawBob() {
 	glPopMatrix();
 
 
-
-
-
-
-
-	//////////////////////////////////////////////////////////////////////////////
 	// LEGS
 	// right upper
 	/*float limbHeight = WallHeight / 8.0;
@@ -289,6 +247,20 @@ int Bob::command(int argc, myCONST_SPEC char** argv)
 	{
 		animTcl::OutputMessage("system %s: wrong number of params.", m_name.c_str());
 		return TCL_ERROR;
+	}
+	else if (strcmp(argv[0], "position") == 0) {
+		if (argc == 4) {
+			target_point.x = std::stof(argv[1]);
+			target_point.y = std::stof(argv[2]);
+			target_point.z = std::stof(argv[3]);
+
+			animTcl::OutputMessage("position is: %f, %f, %f", target_point.x, target_point.y, target_point.z);
+
+		}
+		else {
+			animTcl::OutputMessage("system %s: wrong number of params.", m_name.c_str());
+			return TCL_ERROR;
+		}
 	}
 	
 

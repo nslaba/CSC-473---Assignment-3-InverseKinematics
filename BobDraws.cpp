@@ -104,14 +104,6 @@ void BobDraws::converge(int max)
 void BobDraws::lerp(Eigen::Vector4d start, Eigen::Vector4d end, float scalar)
 {
 	Eigen::Vector4d step;
-
-	//animTcl::OutputMessage("scalar is: %f", scalar);
-	glm::vec4 start_print = { start[0], start[1], start[2], start[3] };
-	glm::vec4 end_print = { end[0], end[1], end[2], end[3] };
-	animTcl::OutputMessage("current start is: %f %f %f", start_print.x, start_print.y, start_print.z, start_print.w);
-	animTcl::OutputMessage("current end vector is: %f %f %f %f", end_print.x, end_print.y, end_print.z, end_print.w);
-
-
 	/***************************************************************/
 	/* STEP 1: find p target by linearly interpolating between start and end by scalar*/
 	P_target = (1.0f - scalar) * start + end * scalar; 
@@ -146,12 +138,6 @@ void BobDraws::lerp(Eigen::Vector4d start, Eigen::Vector4d end, float scalar)
 	EndEffectorWorldCoord transform(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
 	P_endEffector = transform.matrixTransform * Eigen::Vector4d{ 0.0, 0.0, 0.0, 1 };
 
-	///////TEST///////////////////////////////////
-	animTcl::OutputMessage("");
-	animTcl::OutputMessage("END OF LERP");
-	print_vals_for_testing(step);
-
-	////////////////////////////////////
 }
 
 // Given a certain point update end effector to move there
@@ -187,14 +173,7 @@ void BobDraws::moveToPointInOneFrame() {
 	EndEffectorWorldCoord t(m_bob->angles, m_bob->L1, m_bob->L2, m_bob->L3, m_bob->z);
 	P_endEffector = t.matrixTransform * Eigen::Vector4d{ 0.0, 0.0, 0.0, 1 };
 	
-	///////TEST///////////////////////////////////
-	animTcl::OutputMessage("");
-	animTcl::OutputMessage("IN MOVE TO POINT IN ONE FRAME");
-	print_vals_for_testing(step);
 
-	////////////////////////////////////
-
-	
 	converge(100);
 	
 	
@@ -208,10 +187,6 @@ void BobDraws::updateP_target(float param)
 	/* STEP 1: convert input parameter to t (percantage of spline length)*/
 	float fullLength = drawingPath->getFullLength();
 	float distanceTravelled = (param / max_animation_time) * fullLength;
-	animTcl::OutputMessage("distanceTravelled is: %f", distanceTravelled);
-	animTcl::OutputMessage("full length is %f: ", fullLength);
-	animTcl::OutputMessage("input param is %f: ", param);
-	animTcl::OutputMessage("param/max_anim is %f", param / max_animation_time);
 
 	/* STEP 2: Calculate position based on P(u(s(t)))*/
 	LookUpTableEntry tempEntry = LookUpTableEntry();
