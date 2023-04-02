@@ -129,23 +129,23 @@ void Bob::drawBob() {
 	glPushMatrix();
 
 	// 3 DOF for Shoulder
-	glRotated(angles.theta1 * 180.0 / 3.141592653589, 1.0, 0.0, 0.0);
-	glRotated(angles.theta2 * 180.0 / 3.141592653589, 0.0, 1.0, 0.0);
-	glRotated(angles.theta3 * 180.0 / 3.141592653589, 0.0, 0.0, 1.0);
+	glRotated(leftAngles.theta1, 1.0, 0.0, 0.0);
+	glRotated(leftAngles.theta2, 0.0, 1.0, 0.0);
+	glRotated(leftAngles.theta3, 0.0, 0.0, 1.0);
 
 
 	//right forearm
 	glPushMatrix();
 	glTranslated(0, -L1, 0);
-	glRotated(angles.theta4 * 180.0 / 3.141592653589, 1.0, 0.0, 0.0);
-	glRotated(angles.theta5 * 180.0 / 3.141592653589, 0.0, 1.0, 0.0);
+	glRotated(leftAngles.theta4, 1.0, 0.0, 0.0);
+	glRotated(leftAngles.theta5, 0.0, 1.0, 0.0);
 
 
 	// right hand
 	glPushMatrix();
 	glTranslated(0, -L2, 0);
-	glRotated(angles.theta6 * 180.0 / 3.141592653589, 0.0, 0.0, 1.0);
-	glRotated(angles.theta7 * 180.0 / 3.141592653589, 0.0, 1.0, 0.0);
+	glRotated(leftAngles.theta6, 0.0, 0.0, 1.0);
+	glRotated(leftAngles.theta7, 0.0, 1.0, 0.0);
 
 
 	//draw hand

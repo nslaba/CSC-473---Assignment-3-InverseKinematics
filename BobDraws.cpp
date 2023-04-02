@@ -262,6 +262,9 @@ void BobDraws::initializePs() {
 
 	// Initialize resting position in degrees
 	m_bob->angles = rAngles{ 10.0 * 3.141592653589 / 180.0, 10.0 * 3.141592653589 / 180.0, 10.0 * 3.141592653589 / 180.0, 10.0 * 3.141592653589 / 180.0, 10.0 * 3.141592653589 / 180.0, 10.0 * 3.141592653589 / 180.0, 10.0 * 3.141592653589 / 180.0 };
+	m_bob->leftAngles = rAngles{ 10.0 , -10.0, -15.0, 5.0, -25.0, -10.0, -10.0};
+	
+	
 	// Create an initial eigen point for end effector in world coordinates	
 	P_endEffector << 0.0, 0.0, 0.0, 1.0; 
 

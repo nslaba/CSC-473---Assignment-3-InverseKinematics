@@ -39,7 +39,7 @@ public:
 
 	//initial position angles
 	rAngles angles = rAngles{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-	
+	rAngles leftAngles = rAngles{ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
 	//TESTING VAR
 	glm::vec3 temp_end_eff{ 0.0, 0.0, 0.0 };
