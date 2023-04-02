@@ -305,6 +305,9 @@ int BobDraws::command(int argc, myCONST_SPEC char** argv)
 		if (argc == 2) {
 			// call HermiteSpline to load the file argv[3]
 			drawingPath->load(argv[1]);
+			// get rid of resting position
+			m_bob->restPosition = false;
+			m_bob->readyPosition = true;
 			// Initialize P
 			initializePs();
 		}

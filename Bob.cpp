@@ -63,6 +63,7 @@ void Bob::drawBob() {
 
 	// Translate the whole person away from the board by z and down by half of torsoHeight
 	glTranslated(-torsoWidth/2.0, -torsoHeight / 2.0, z);
+	
 
 	// Draw Torso			
 	glPushMatrix(); 
@@ -82,42 +83,104 @@ void Bob::drawBob() {
 	glPopMatrix();
 
 	// ARM LEFT
+	////////////////////////// ORIGINAL CODE /////////////////////////////////////
+	//// left upper
+	//glPushMatrix();
+	////glTranslated(0.0, -torsoHeight/2.0, 0.0);
+	//
+	//glTranslated(-(torsoWidth + L1) / 2.0, torsoHeight / 2.0, 0.0);
+	////glTranslated(-(torsoWidth + L1) / 2.0, 0.0, 0.0);
+	//// For now Rotate 90
+	//if (restPosition) glRotated(-90, 0, 0, 1);
+	//
+	//
+	////right lower
+	//glPushMatrix();
+	//glTranslated(0, -(L1 + L2) / 2.0, 0);
+	////glRotated(15, 0, 0, 1);
 
-	// left upper
-	glPushMatrix();
-	//glTranslated(0.0, -torsoHeight/2.0, 0.0);
+	//// Draw Hand
+	//glPushMatrix();
+	//glTranslated(0, -(L2 + L3) / 2.0, 0);
+	//glScaled(limbWidth, L3, 1);
+	//glEnable(GL_COLOR_MATERIAL);
+	//glColor3f(0.0, 1.0, 0.0);
+	//GLdrawCircle(0.5, 500);
+	//glPopMatrix();
 
-	glTranslated(-(torsoWidth + L1) / 2.0, torsoHeight / 2.0, 0.0);
-	//glTranslated(-(torsoWidth + L1) / 2.0, 0.0, 0.0);
-	// For now Rotate 90
-	glRotated(-90, 0, 0, 1);
-	
-	//right lower
-	glPushMatrix();
-	glTranslated(0, -(L1 + L2) / 2.0, 0);
-	//glRotated(15, 0, 0, 1);
+	//glScaled(limbWidth, L2, 1);
+	//glEnable(GL_COLOR_MATERIAL);
+	//glColor3f(0.0, 1.0, 0.0);
+	//GLdrawCircle(0.5, 500);
+	//glPopMatrix();
 
-	// Draw Hand
+	//glScaled(limbWidth, L1, 1);
+	//glEnable(GL_COLOR_MATERIAL);
+	//glColor3f(0.0, 1.0, 0.0);
+	//GLdrawCircle(0.5, 500);
+	//glPopMatrix();
+	///////////////////////////// TEST ////////////////////////////////////////
+
 	glPushMatrix();
-	glTranslated(0, -(L2 + L3) / 2.0, 0);
+	glTranslated(-(torsoWidth) / 2.0, torsoHeight / 2.0, 0.0);
+	if (restPosition) glRotated(-90, 0, 0, 1);
+	// ARMS
+	// right arm
+	glPushMatrix();
+
+	// 3 DOF for Shoulder
+	glRotated(angles.theta1 * 180.0 / 3.141592653589, 1.0, 0.0, 0.0);
+	glRotated(angles.theta2 * 180.0 / 3.141592653589, 0.0, 1.0, 0.0);
+	glRotated(angles.theta3 * 180.0 / 3.141592653589, 0.0, 0.0, 1.0);
+
+
+	//right forearm
+	glPushMatrix();
+	glTranslated(0, -L1, 0);
+	glRotated(angles.theta4 * 180.0 / 3.141592653589, 1.0, 0.0, 0.0);
+	glRotated(angles.theta5 * 180.0 / 3.141592653589, 0.0, 1.0, 0.0);
+
+
+	// right hand
+	glPushMatrix();
+	glTranslated(0, -L2, 0);
+	glRotated(angles.theta6 * 180.0 / 3.141592653589, 0.0, 0.0, 1.0);
+	glRotated(angles.theta7 * 180.0 / 3.141592653589, 0.0, 1.0, 0.0);
+
+
+	//draw hand
+	glTranslated(0, -L3 / 2.0, 0);
 	glScaled(limbWidth, L3, 1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);
 	GLdrawCircle(0.5, 500);
 	glPopMatrix();
 
+	//draw forearm
+	glTranslated(0, -L2 / 2.0, 0);
 	glScaled(limbWidth, L2, 1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);
 	GLdrawCircle(0.5, 500);
 	glPopMatrix();
 
+	//draw arm
+	glTranslated(0, -L1 / 2.0, 0);
 	glScaled(limbWidth, L1, 1);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.0, 1.0, 0.0);
 	GLdrawCircle(0.5, 500);
 	glPopMatrix();
 
+	glPopMatrix();
+
+
+
+
+
+
+
+	//////////////////////////////////////////////////////////////////////////////
 	// LEGS
 	// right upper
 	/*float limbHeight = WallHeight / 8.0;
@@ -168,6 +231,7 @@ void Bob::drawRightHand(rAngles angles)
 	
 	glPushMatrix();
 	glTranslated(0.0, 0.0, z);
+	if (restPosition) glRotated(90, 0, 0, 1);
 	// ARMS
 	// right arm
 	glPushMatrix();
